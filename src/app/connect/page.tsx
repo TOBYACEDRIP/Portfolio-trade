@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Briefcase, GraduationCap, Handshake, LineChart, MessageCircle } from "lucide-react";
 import { mailto } from "@/config/socials";
-import { mentorship } from "@/config/mentorship";
 import { pageMetadata } from "@/lib/seo";
 import { Container, PageHero, Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/Reveal";
@@ -76,8 +75,10 @@ export default function ConnectPage() {
           >
             <div>
               <p className="eyebrow text-sky-deep!">Mentorship</p>
-              <p className="mt-3 text-2xl font-extrabold text-navy sm:text-3xl">{mentorship.name}</p>
-              <p className="mt-2 max-w-xl text-navy-soft">{mentorship.tagline} Structured education built around the TOBYACE Model™.</p>
+              <p className="mt-3 text-2xl font-extrabold text-navy sm:text-3xl">Two ways to learn the TOBYACE Model™</p>
+              <p className="mt-2 max-w-xl text-navy-soft">
+                The Liquidity Room group programme ($75 / ₦100,000) or private one-to-one mentorship in three tiers, from $750. Education, not signals.
+              </p>
             </div>
             <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-navy px-6 py-3 text-sm font-semibold text-white">
               Learn more <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />

@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = "image/png";
 
 export default function Image() {
-  return renderOgImage({ eyebrow: "Mentorship", title: "The Liquidity Room — structured trading education." });
+  return renderOgImage({ eyebrow: "Mentorship", title: "The Liquidity Room & Private Mentorship." });
 }

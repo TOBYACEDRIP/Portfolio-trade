@@ -1,142 +1,526 @@
-import { Check, Minus } from "lucide-react";
-import { audience, curriculum, mentorship, mentorshipEnquiry, principles } from "@/config/mentorship";
+import { ArrowDown, ArrowRight, Check, Lock, MessagesSquare, ShieldCheck, Users, Video } from "lucide-react";
+import { comparison, faqs, group, mentorshipIntro, privateMentorship, privateTiers, sharedFoundation, telegramHref, tierComparison } from "@/config/mentorship";
 import { riskDisclaimer } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
-import { ButtonLink, Container, PageHero, Section, SectionHeading } from "@/components/ui/primitives";
+import { Aurora, Container, Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/Reveal";
+import { TiltCard } from "@/components/ui/TiltCard";
+import { SmartLink } from "@/components/ui/SmartLink";
 import { SocialIcon } from "@/components/icons/SocialIcon";
 import { CandleField } from "@/components/charts/CandleField";
+import { ApplicationForm } from "@/components/mentorship/ApplicationForm";
+import { Faq } from "@/components/mentorship/Faq";
 
 export const metadata = pageMetadata({
-  title: "The Liquidity Room — Mentorship",
+  title: "Mentorship — The Liquidity Room & Private Mentorship",
   description:
-    "The Liquidity Room: a structured trading education programme built around the TOBYACE Model™ — market narrative, structure, liquidity, POI logic, execution, risk and psychology. Not a signals service.",
+    "Learn the TOBYACE Model™ with TheTobyAce: The Liquidity Room group mentorship ($75) or private one-to-one mentorship in three tiers ($750, $1,200, $2,000). Education, not signals.",
   path: "/mentorship",
 });
+
+const joinHref = telegramHref ?? group.joinEmail;
+
+function TelegramMark({ size = 13, className = "" }: { size?: number; className?: string }) {
+  return <SocialIcon platform="telegram" size={size} className={className} />;
+}
+
+/** Abstract "group" motif: overlapping circles in the brand palette. */
+function CommunityMark() {
+  const dots = ["bg-sky", "bg-peach", "bg-navy", "bg-sky-soft", "bg-white"];
+  return (
+    <div className="flex -space-x-2.5" aria-hidden="true">
+      {dots.map((c, i) => (
+        <span key={i} className={`h-9 w-9 rounded-full border-2 border-white ${c} shadow-sm`} />
+      ))}
+    </div>
+  );
+}
 
 export default function MentorshipPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Mentorship"
-        title={
-          <>
-            The Liquidity <span className="text-gradient">Room</span>
-          </>
-        }
-        lede={mentorship.lede}
-      >
-        <div className="flex flex-wrap items-center gap-3">
-          {mentorship.status && (
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky-deep/25 bg-ice px-3.5 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-sky-deep">
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <header className="relative overflow-hidden border-b border-line">
+        <Aurora />
+        <div className="chart-grid chart-grid-fade pointer-events-none absolute inset-0" aria-hidden="true" />
+        <Container className="relative pt-32 pb-16 text-center sm:pt-40 sm:pb-20">
+          <Reveal>
+            <p className="eyebrow inline-flex items-center gap-2.5 text-sky-deep!">
               <span className="h-1.5 w-1.5 rounded-full bg-sky" aria-hidden="true" />
-              {mentorship.status}
-            </span>
-          )}
-          <ButtonLink href="#enquire" icon={null}>
-            Enquire
-          </ButtonLink>
-          <ButtonLink href="#curriculum" variant="secondary" icon={null}>
-            View the curriculum
-          </ButtonLink>
-        </div>
-      </PageHero>
+              {mentorshipIntro.eyebrow}
+            </p>
+            <h1 className="mx-auto mt-6 max-w-4xl text-[2.6rem] font-extrabold leading-[1.02] text-navy sm:text-6xl lg:text-7xl">
+              Learn to read the market <span className="text-gradient">for yourself.</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-navy-soft sm:text-xl">{mentorshipIntro.lede}</p>
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
+              <a href="#programmes" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white hover:bg-[#1b2c4f]">
+                Compare the programmes <ArrowDown size={16} aria-hidden="true" />
+              </a>
+            </div>
+            <p className="mx-auto mt-8 inline-flex max-w-2xl items-start gap-2.5 rounded-2xl border border-line bg-white/70 px-4 py-3 text-left text-sm text-navy-soft backdrop-blur">
+              <ShieldCheck size={17} className="mt-0.5 shrink-0 text-sky-deep" aria-hidden="true" />
+              {mentorshipIntro.notSignals}
+            </p>
+          </Reveal>
+        </Container>
+      </header>
 
-      <Section className="bg-white">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-20">
-          <SectionHeading eyebrow="Overview" title={mentorship.tagline} />
-          <Reveal className="space-y-5 text-lg leading-relaxed text-navy-soft">
-            {mentorship.overview.map((p) => (
-              <p key={p.slice(0, 20)}>{p}</p>
+      {/* ── SHARED FOUNDATION ────────────────────────────────────────────── */}
+      <div className="border-b border-line bg-white">
+        <Container className="flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:gap-8">
+          <p className="eyebrow shrink-0">Both programmes teach</p>
+          <ul className="flex flex-wrap gap-2">
+            {sharedFoundation.map((t) => (
+              <li key={t} className="rounded-full border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-navy-soft">
+                {t}
+              </li>
             ))}
+          </ul>
+        </Container>
+      </div>
+
+      {/* ── TWO PROGRAMME CARDS ──────────────────────────────────────────── */}
+      <Section id="programmes" labelledBy="programmes-title" className="pb-12 sm:pb-16">
+        <h2 id="programmes-title" className="sr-only">
+          The two programmes
+        </h2>
+        <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
+          {/* Group */}
+          <Reveal className="h-full">
+            <TiltCard className="h-full" max={3}>
+              <article aria-labelledby="group-card-title" className="panel-ice relative flex h-full flex-col overflow-hidden p-7 sm:p-9">
+                <div className="chart-grid absolute inset-0 opacity-60" aria-hidden="true" />
+                <div className="relative flex items-start justify-between gap-4">
+                  <div>
+                    <p className="eyebrow text-sky-deep!">{group.kind}</p>
+                    <h3 id="group-card-title" className="mt-3 text-3xl font-extrabold text-navy sm:text-4xl">
+                      {group.name}
+                    </h3>
+                  </div>
+                  <CommunityMark />
+                </div>
+                <p className="relative mt-4 text-navy-soft">{group.positioning}</p>
+
+                <div className="relative mt-7 flex flex-wrap items-end gap-x-4 gap-y-1 border-y border-sky-deep/15 py-5">
+                  <p className="text-5xl font-extrabold tracking-tight text-navy">{group.price.primary}</p>
+                  <p className="pb-1.5 text-xl font-bold text-navy-soft">/ {group.price.secondary}</p>
+                  <p className="w-full font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">{group.price.note}</p>
+                </div>
+
+                <ul className="relative mt-6 flex flex-wrap gap-2">
+                  {[
+                    { icon: Users, t: "Group classes" },
+                    { icon: Video, t: "8 live Zoom sessions" },
+                    { icon: MessagesSquare, t: "Student community" },
+                  ].map(({ icon: Icon, t }) => (
+                    <li key={t} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-navy shadow-[var(--shadow-soft)]">
+                      <Icon size={13} className="text-sky-deep" aria-hidden="true" /> {t}
+                    </li>
+                  ))}
+                </ul>
+
+                <ul className="relative mt-6 grid gap-2.5 sm:grid-cols-2">
+                  {group.features.map((f) => (
+                    <li key={f} className="flex gap-2.5 text-sm text-navy-soft">
+                      <Check size={16} className="mt-0.5 shrink-0 text-sky-deep" aria-hidden="true" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="relative mt-auto pt-8">
+                  <p className="text-sm text-navy">
+                    <span className="font-bold">Ideal for: </span>
+                    {group.idealFor}
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-4">
+                    <SmartLink
+                      href={joinHref}
+                      className="inline-flex min-h-12 items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white transition-colors hover:bg-[#1b2c4f]"
+                    >
+                      {group.cta} <ArrowRight size={16} aria-hidden="true" />
+                    </SmartLink>
+                    <a href="#liquidity-room" className="text-sm font-semibold text-sky-deep hover:text-navy">
+                      See the 8 classes
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </TiltCard>
+          </Reveal>
+
+          {/* Private */}
+          <Reveal delay={0.08} className="h-full">
+            <TiltCard className="h-full" max={3}>
+              {/* Gradient hairline border for a more refined, private treatment */}
+              <div className="h-full rounded-[calc(var(--radius-card)+2px)] bg-[linear-gradient(140deg,#70C8F5,rgba(112,200,245,0.15)_40%,rgba(255,218,184,0.2)_65%,#FFDAB8)] p-[1.5px] shadow-[0_40px_80px_-40px_rgb(16_29_54/0.7)]">
+                <article aria-labelledby="private-card-title" className="panel-navy relative flex h-full flex-col overflow-hidden p-7 sm:p-9">
+                  <div aria-hidden="true" className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-sky/20 blur-3xl motion-safe:animate-float-slow" />
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div>
+                      <p className="eyebrow text-sky!">{privateMentorship.kind}</p>
+                      <h3 id="private-card-title" className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">
+                        {privateMentorship.name}
+                      </h3>
+                    </div>
+                    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-peach/40 bg-peach/10 px-3 py-1.5 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-peach">
+                      <Lock size={11} aria-hidden="true" /> By application
+                    </span>
+                  </div>
+                  <p className="relative mt-4 text-white/75">{privateMentorship.positioning}</p>
+
+                  <div className="relative mt-7 flex flex-wrap items-end gap-x-4 gap-y-1 border-y border-white/10 py-5">
+                    <p className="text-5xl font-extrabold tracking-tight text-white">{privateMentorship.price.primary}</p>
+                    <p className="w-full font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white/60">{privateMentorship.price.note}</p>
+                  </div>
+
+                  <ul className="relative mt-6 flex flex-wrap gap-2">
+                    {[
+                      { icon: Lock, t: "One-to-one" },
+                      { icon: Video, t: "Weekly private Zoom" },
+                      { icon: TelegramMark, t: "Direct Telegram access" },
+                    ].map(({ icon: Icon, t }) => (
+                      <li key={t} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-white">
+                        <Icon size={13} className="text-sky" aria-hidden="true" /> {t}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ul className="relative mt-6 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10" aria-label="Private tiers">
+                    {privateTiers.map((t) => (
+                      <li key={t.id}>
+                        <a href={`#tier-${t.id}`} className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.06]">
+                          <span>
+                            <span className="block text-sm font-bold text-white">{t.name}</span>
+                            <span className="block text-xs text-white/60">
+                              {t.duration} · {t.positioning}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-lg font-extrabold text-white">{t.price}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="relative mt-auto pt-8">
+                    <p className="text-sm text-white/70">
+                      <span className="font-bold text-white">Limited enrolment. </span>
+                      {privateMentorship.exclusivity}
+                    </p>
+                    <div className="mt-6 flex flex-wrap items-center gap-4">
+                      <a href="#apply" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-navy transition-colors hover:bg-ice">
+                        {privateMentorship.cta} <ArrowRight size={16} aria-hidden="true" />
+                      </a>
+                      <a href="#tiers" className="text-sm font-semibold text-sky hover:text-white">
+                        Compare private tiers
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </TiltCard>
           </Reveal>
         </div>
       </Section>
 
-      <Section id="curriculum" labelledBy="curriculum-title">
-        <SectionHeading id="curriculum-title" eyebrow="Curriculum" title="Taught in the same order as the model." className="mb-12" />
-        <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {curriculum.map((m, i) => (
-            <Reveal as="li" key={m.number} delay={0.04 * (i % 3)} className="surface p-6">
-              <p className="font-mono text-sm text-sky-deep">{m.number}</p>
-              <h3 className="mt-3 text-xl font-extrabold text-navy">{m.title}</h3>
-              <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${m.title} topics`}>
-                {m.topics.map((t) => (
-                  <li key={t} className="rounded-full border border-line bg-canvas px-3 py-1 text-xs text-navy-soft">
+      {/* ── THE LIQUIDITY ROOM — DETAIL ──────────────────────────────────── */}
+      <section id="liquidity-room" aria-labelledby="lr-title" className="scroll-mt-20 border-t border-line bg-white py-20 sm:py-28">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-16">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <SectionHeading id="lr-title" eyebrow="Group Mentorship" title="The Liquidity Room" lede={group.summary} />
+              <Reveal className="mt-8">
+                <CommunityMark />
+                <p className="mt-4 text-sm leading-relaxed text-navy-soft">
+                  Learn alongside other students in a focused community — ask questions live, discuss setups and revisit recordings where available.
+                </p>
+                <SmartLink
+                  href={joinHref}
+                  className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white transition-colors hover:bg-[#1b2c4f]"
+                >
+                  {group.cta} <ArrowRight size={16} aria-hidden="true" />
+                </SmartLink>
+                {telegramHref && (
+                  <p className="mt-3 text-sm text-muted">
+                    Prefer email?{" "}
+                    <a href={group.joinEmail} className="font-semibold text-sky-deep underline underline-offset-4 hover:text-navy">
+                      Enquire by email
+                    </a>
+                  </p>
+                )}
+              </Reveal>
+            </div>
+            <ol className="grid gap-3 sm:grid-cols-2" aria-label="The 8 classes">
+              {group.classes.map((c, i) => (
+                <Reveal as="li" key={c.n} delay={0.03 * (i % 2)} className="panel-ice p-5">
+                  <p className="font-mono text-xs text-sky-deep">Class {c.n}</p>
+                  <h3 className="mt-2 text-lg font-bold text-navy">{c.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-navy-soft">{c.body}</p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── PRIVATE — DETAIL ─────────────────────────────────────────────── */}
+      <section id="private" aria-labelledby="pm-title" className="relative scroll-mt-20 overflow-hidden bg-navy py-20 text-white sm:py-28">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-sky/15 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-peach/10 blur-3xl" />
+        <Container className="relative">
+          <SectionHeading
+            id="pm-title"
+            invert
+            eyebrow="Private One-to-One"
+            title="Built around you, not a syllabus."
+            lede={privateMentorship.summary}
+          />
+
+          <Reveal className="mt-10 grid gap-6 text-base leading-relaxed text-white/75 lg:grid-cols-2">
+            {privateMentorship.philosophy.map((p) => (
+              <p key={p.slice(0, 20)}>{p}</p>
+            ))}
+          </Reveal>
+
+          {/* Six-week journey */}
+          <p className="mt-14 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-sky">How the six-week Standard programme runs · Premium and Elite extend it</p>
+          <ol className="relative mt-4 grid gap-3 md:grid-cols-3 lg:grid-cols-6" aria-label="The six weeks of Standard mentorship">
+            {privateMentorship.weeks.map((w, i) => (
+              <Reveal as="li" key={w.n} delay={0.04 * i} className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky font-mono text-xs font-bold text-navy">{i + 1}</span>
+                <p className="mt-4 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-sky">{w.n}</p>
+                <h3 className="mt-1 font-bold text-white">{w.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{w.body}</p>
+              </Reveal>
+            ))}
+          </ol>
+          <p className="mt-4 text-sm text-white/55">Throughout: weekly private Zoom sessions, direct Telegram communication, individual chart reviews and accountability.</p>
+
+          <div className="mt-14 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+            <Reveal className="rounded-[var(--radius-card)] border border-white/10 bg-white/[0.04] p-7">
+              <h3 className="eyebrow text-sky!">The ideal student</h3>
+              <ul className="mt-5 space-y-3">
+                {privateMentorship.idealFor.map((t) => (
+                  <li key={t} className="flex gap-3 text-white/80">
+                    <Check size={17} className="mt-0.5 shrink-0 text-sky" aria-hidden="true" />
                     {t}
                   </li>
                 ))}
               </ul>
             </Reveal>
-          ))}
-        </ol>
-      </Section>
-
-      <Section labelledBy="principles-title" className="bg-white">
-        <SectionHeading id="principles-title" eyebrow="Teaching philosophy" title="How the room works." className="mb-12" />
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {principles.map((p, i) => (
-            <Reveal as="li" key={p.title} delay={0.04 * i} className="panel-ice p-6">
-              <h3 className="text-lg font-bold text-navy">{p.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-navy-soft">{p.body}</p>
+            <Reveal delay={0.06} className="flex flex-col rounded-[var(--radius-card)] bg-white p-7 text-navy">
+              <Lock size={20} className="text-sky-deep" aria-hidden="true" />
+              <h3 className="mt-4 text-2xl font-extrabold">Limited enrolment</h3>
+              <p className="mt-3 text-sm leading-relaxed text-navy-soft">{privateMentorship.exclusivity}</p>
+              <p className="mt-6 text-4xl font-extrabold tracking-tight">{privateMentorship.price.primary}</p>
+              <p className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">{privateMentorship.price.note}</p>
+              <a href="#tiers" className="mt-6 inline-flex min-h-12 w-fit items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white hover:bg-[#1b2c4f]">
+                Compare private tiers <ArrowRight size={16} aria-hidden="true" />
+              </a>
             </Reveal>
-          ))}
-        </ul>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── PRIVATE TIERS ───────────────────────────────────────────────── */}
+      <Section id="tiers" labelledBy="tiers-title">
+        <SectionHeading
+          id="tiers-title"
+          eyebrow="Private mentorship tiers"
+          title="Same one-to-one model. Different depth and access."
+          lede="Every tier is private and built around you. Higher tiers add time, sessions, review depth and access. They don't add guaranteed outcomes."
+          className="mb-12"
+        />
+        <div className="grid items-stretch gap-5 lg:grid-cols-3">
+          {privateTiers.map((t, i) => {
+            const elite = t.id === "elite";
+            const premium = t.id === "premium";
+            const card = (
+              <article
+                id={`tier-${t.id}`}
+                aria-labelledby={`tier-${t.id}-title`}
+                className={`relative flex h-full scroll-mt-28 flex-col overflow-hidden p-7 sm:p-8 ${
+                  elite || premium ? "panel-navy" : "surface"
+                }`}
+              >
+                {elite && <div aria-hidden="true" className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-peach/20 blur-3xl" />}
+                <div className="relative flex items-start justify-between gap-3">
+                  <p className={`font-mono text-[0.6875rem] uppercase tracking-[0.14em] ${elite || premium ? "text-sky" : "text-sky-deep"}`}>
+                    Tier {String(i + 1).padStart(2, "0")} · {t.duration}
+                  </p>
+                  {t.badge && (
+                    <span className="shrink-0 rounded-full border border-peach/40 bg-peach/10 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-peach">
+                      {t.badge}
+                    </span>
+                  )}
+                </div>
+                <h3 id={`tier-${t.id}-title`} className={`relative mt-3 text-2xl font-extrabold ${elite || premium ? "text-white" : "text-navy"}`}>
+                  {t.name}
+                </h3>
+                <p className={`relative mt-2 text-sm ${elite || premium ? "text-white/70" : "text-navy-soft"}`}>{t.summary}</p>
+                <p className={`relative mt-6 text-5xl font-extrabold tracking-tight ${elite || premium ? "text-white" : "text-navy"}`}>{t.price}</p>
+                <div className={`relative mt-6 border-t pt-6 ${elite || premium ? "border-white/10" : "border-line"}`}>
+                  <p className={`text-xs font-bold uppercase tracking-[0.1em] ${elite || premium ? "text-white/60" : "text-muted"}`}>{t.addsLabel ?? "Includes"}</p>
+                  <ul className="mt-4 space-y-2.5">
+                    {t.adds.map((a) => (
+                      <li key={a} className={`flex gap-2.5 text-sm ${elite || premium ? "text-white/85" : "text-navy-soft"}`}>
+                        <Check size={16} className={`mt-0.5 shrink-0 ${elite ? "text-peach" : elite || premium ? "text-sky" : "text-sky-deep"}`} aria-hidden="true" />
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="relative mt-auto pt-8">
+                  <a
+                    href={`?tier=${t.id}#apply`}
+                    className={`inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-colors ${
+                      elite ? "bg-peach text-navy hover:bg-[#ffe6cf]" : premium ? "bg-sky text-navy hover:bg-[#86d2f8]" : "bg-navy text-white hover:bg-[#1b2c4f]"
+                    }`}
+                  >
+                    Apply for {t.name.split(" ")[0]} <ArrowRight size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            );
+            return (
+              <Reveal key={t.id} delay={0.06 * i} className="h-full">
+                <TiltCard className="h-full" max={3}>
+                  {elite ? (
+                    <div className="h-full rounded-[calc(var(--radius-card)+2px)] bg-[linear-gradient(140deg,#FFDAB8,rgba(255,218,184,0.15)_45%,rgba(112,200,245,0.25)_70%,#70C8F5)] p-[1.5px] shadow-[0_40px_80px_-40px_rgb(16_29_54/0.7)]">
+                      {card}
+                    </div>
+                  ) : (
+                    card
+                  )}
+                </TiltCard>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        <Reveal className="mt-10">
+          <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-soft)]">
+            <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
+              <caption className="sr-only">Comparison of the three private mentorship tiers</caption>
+              <thead>
+                <tr className="border-b border-line">
+                  <th scope="col" className="w-[22%] px-5 py-4">
+                    <span className="sr-only">Feature</span>
+                  </th>
+                  {privateTiers.map((t) => (
+                    <th key={t.id} scope="col" className={`px-5 py-4 text-sm font-extrabold ${t.id === "standard" ? "text-navy" : "bg-navy text-white"}`}>
+                      {t.name.replace(" Mentorship", "").replace(" Coaching", "")}
+                      <span className={`block font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] ${t.id === "standard" ? "text-sky-deep" : t.id === "elite" ? "text-peach" : "text-sky"}`}>
+                        {t.price}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tierComparison.map((r) => (
+                  <tr key={r.label} className="border-b border-line last:border-0">
+                    <th scope="row" className="px-5 py-3.5 font-semibold text-navy">
+                      {r.label}
+                    </th>
+                    {[r.standard, r.premium, r.elite].map((v, k) => (
+                      <td key={k} className={`px-5 py-3.5 ${k === 0 ? "text-navy-soft" : "bg-navy/[0.03] text-navy"}`}>
+                        {v === "—" ? <span className="text-muted">Not included</span> : v === "Included" ? <span className="inline-flex items-center gap-1.5 font-semibold"><Check size={15} className="text-sky-deep" aria-hidden="true" />Included</span> : v}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+        <p className="mt-5 text-sm text-muted">{privateMentorship.exclusivity}</p>
       </Section>
 
-      <Section labelledBy="audience-title">
-        <SectionHeading id="audience-title" eyebrow="Who it's for" title="Is it the right fit?" className="mb-12" />
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Reveal className="surface p-7">
-            <h3 className="eyebrow text-sky-deep!">It&apos;s for you if</h3>
-            <ul className="mt-5 space-y-3">
-              {audience.forYou.map((a) => (
-                <li key={a} className="flex gap-3 text-navy-soft">
-                  <Check size={18} className="mt-0.5 shrink-0 text-sky-deep" aria-hidden="true" />
-                  {a}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-          <Reveal delay={0.06} className="surface p-7">
-            <h3 className="eyebrow">It&apos;s not for you if</h3>
-            <ul className="mt-5 space-y-3">
-              {audience.notForYou.map((a) => (
-                <li key={a} className="flex gap-3 text-muted">
-                  <Minus size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
-                  {a}
-                </li>
-              ))}
-            </ul>
+      {/* ── COMPARISON ───────────────────────────────────────────────────── */}
+      <Section labelledBy="compare-title">
+        <SectionHeading
+          id="compare-title"
+          eyebrow="Compare"
+          title="Group or private?"
+          lede="Both programmes teach the TOBYACE Model™. The difference is the learning environment, the structure and the level of individual attention."
+          className="mb-12"
+        />
+        <Reveal>
+          <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-soft)]">
+            <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
+              <caption className="sr-only">Comparison of The Liquidity Room and Private Mentorship</caption>
+              <thead>
+                <tr>
+                  <th scope="col" className="w-[24%] border-b border-line px-5 py-4 font-mono text-[0.6875rem] font-normal uppercase tracking-[0.12em] text-muted">
+                    &nbsp;
+                  </th>
+                  <th scope="col" className="w-[38%] border-b border-line bg-ice/60 px-5 py-4 text-base font-extrabold text-navy">
+                    The Liquidity Room
+                    <span className="block font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] text-sky-deep">Group</span>
+                  </th>
+                  <th scope="col" className="w-[38%] border-b border-navy bg-navy px-5 py-4 text-base font-extrabold text-white">
+                    Private Mentorship
+                    <span className="block font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] text-sky">One-to-one</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparison.map((row) => (
+                  <tr key={row.label} className="border-b border-line last:border-0">
+                    <th scope="row" className="px-5 py-4 font-semibold text-navy">
+                      {row.label}
+                    </th>
+                    <td className="bg-ice/30 px-5 py-4 text-navy-soft">{row.group === "—" ? <span className="text-muted">Not included</span> : row.group}</td>
+                    <td className="bg-navy/[0.03] px-5 py-4 text-navy">{row.private}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+      </Section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <Section labelledBy="faq-title" className="bg-white">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <SectionHeading id="faq-title" eyebrow="FAQ" title="Questions, answered honestly." />
+          <Reveal>
+            <Faq items={faqs} />
           </Reveal>
         </div>
       </Section>
 
-      <section id="enquire" aria-labelledby="enquire-title" className="scroll-mt-20 pb-20 sm:pb-28">
+      {/* ── APPLY ────────────────────────────────────────────────────────── */}
+      <section id="apply" aria-labelledby="apply-title" className="scroll-mt-20 py-20 sm:py-28">
         <Container>
           <Reveal>
-            <div className="panel-navy relative overflow-hidden px-6 py-14 sm:px-14 sm:py-20">
-              <CandleField className="absolute -right-10 bottom-0 hidden h-[85%] w-[50%] opacity-45 md:block" />
-              <div className="relative max-w-xl">
-                <p className="eyebrow text-sky!">Enquire</p>
-                <h2 id="enquire-title" className="mt-5 text-3xl font-extrabold text-white sm:text-5xl">
-                  Ask about the next intake.
-                </h2>
-                <p className="mt-5 text-white/70">Tell me where you are with trading and what you&apos;re looking for, and I&apos;ll reply with details.</p>
-                <div className="mt-9 flex flex-wrap gap-3">
-                  {mentorshipEnquiry.telegram && (
-                    <ButtonLink href={mentorshipEnquiry.telegram} variant="sky" icon={<SocialIcon platform="telegram" size={16} />}>
-                      Connect on Telegram
-                    </ButtonLink>
-                  )}
-                  <ButtonLink href={mentorshipEnquiry.email} variant={mentorshipEnquiry.telegram ? "light" : "sky"} icon={<SocialIcon platform="email" size={16} />}>
-                    Enquire by email
-                  </ButtonLink>
+            <div className="panel-navy relative overflow-hidden px-6 py-12 sm:px-12 sm:py-16">
+              <CandleField className="pointer-events-none absolute -right-10 bottom-0 hidden h-[60%] w-[40%] opacity-25 lg:block" />
+              <div className="relative grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+                <div>
+                  <p className="eyebrow inline-flex items-center gap-2 text-peach!">
+                    <Lock size={12} aria-hidden="true" /> Private mentorship
+                  </p>
+                  <h2 id="apply-title" className="mt-5 text-3xl font-extrabold leading-[1.08] text-white sm:text-5xl">
+                    Apply for private mentorship.
+                  </h2>
+                  <p className="mt-5 text-white/70">
+                    Choose a tier, or let me advise you. A few short questions help me understand where you are and which programme fits. I review every application individually and reply with next steps.
+                  </p>
+                  <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.05] p-5">
+                    <p className="text-sm font-semibold text-white">Looking for The Liquidity Room instead?</p>
+                    <SmartLink href={joinHref} className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-sky hover:text-white">
+                      {group.cta} <ArrowRight size={14} aria-hidden="true" />
+                    </SmartLink>
+                  </div>
                 </div>
+                <ApplicationForm />
               </div>
             </div>
           </Reveal>
-          <p className="mt-8 max-w-3xl text-xs leading-relaxed text-muted">{riskDisclaimer}</p>
+          <p className="mt-8 max-w-4xl text-xs leading-relaxed text-muted">{riskDisclaimer} Mentorship is education only and does not guarantee profits, consistency or any particular trading outcome.</p>
         </Container>
       </section>
     </>
