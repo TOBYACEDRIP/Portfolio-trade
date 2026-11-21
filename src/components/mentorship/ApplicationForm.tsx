@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Send } from "lucide-react";
 import { applicationEmailSubject, applicationFields, telegramHref } from "@/config/mentorship";
 import { contact } from "@/config/site";
@@ -13,6 +13,15 @@ import { SocialIcon } from "@/components/icons/SocialIcon";
 export function ApplicationForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<"idle" | "copied" | "emailed">("idle");
+
+  // Pre-select the programme when arriving from a tier card (?tier=premium#apply).
+  useEffect(() => {
+    const tier = new URLSearchParams(window.location.search).get("tier");
+    const select = formRef.current?.elements.namedItem("programme") as HTMLSelectElement | null;
+    if (!tier || !select) return;
+    const match = Array.from(select.options).find((o) => o.value.toLowerCase().startsWith(tier));
+    if (match) select.value = match.value;
+  }, []);
 
   function compose(): string | null {
     const form = formRef.current;
@@ -59,7 +68,7 @@ export function ApplicationForm() {
       aria-describedby="application-note"
     >
       {applicationFields.map((f) => (
-        <div key={f.id} className={f.type === "textarea" ? "sm:col-span-2" : ""}>
+        <div key={f.id} className={f.type === "textarea" || f.id === "programme" ? "sm:col-span-2" : ""}>
           <label htmlFor={`app-${f.id}`} className="text-sm font-semibold text-white">
             {f.label}
             {f.required && <span className="text-sky" aria-hidden="true"> *</span>}

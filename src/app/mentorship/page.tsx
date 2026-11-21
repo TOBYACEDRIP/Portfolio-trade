@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowRight, Check, Lock, MessagesSquare, ShieldCheck, Users, Video } from "lucide-react";
-import { comparison, faqs, group, mentorshipIntro, privateMentorship, sharedFoundation, telegramHref } from "@/config/mentorship";
+import { comparison, faqs, group, mentorshipIntro, privateMentorship, privateTiers, sharedFoundation, telegramHref, tierComparison } from "@/config/mentorship";
 import { riskDisclaimer } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
 import { Aurora, Container, Section, SectionHeading } from "@/components/ui/primitives";
@@ -14,7 +14,7 @@ import { Faq } from "@/components/mentorship/Faq";
 export const metadata = pageMetadata({
   title: "Mentorship — The Liquidity Room & Private Mentorship",
   description:
-    "Two ways to learn the TOBYACE Model™ with TheTobyAce: The Liquidity Room group mentorship (8 live Zoom classes) and six-week private one-to-one mentorship. Education, not signals.",
+    "Learn the TOBYACE Model™ with TheTobyAce: The Liquidity Room group mentorship ($75) or private one-to-one mentorship in three tiers ($750, $1,200, $2,000). Education, not signals.",
   path: "/mentorship",
 });
 
@@ -187,11 +187,18 @@ export default function MentorshipPage() {
                     ))}
                   </ul>
 
-                  <ul className="relative mt-6 grid gap-2.5 sm:grid-cols-2">
-                    {privateMentorship.features.map((f) => (
-                      <li key={f} className="flex gap-2.5 text-sm text-white/80">
-                        <Check size={16} className="mt-0.5 shrink-0 text-sky" aria-hidden="true" />
-                        {f}
+                  <ul className="relative mt-6 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10" aria-label="Private tiers">
+                    {privateTiers.map((t) => (
+                      <li key={t.id}>
+                        <a href={`#tier-${t.id}`} className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.06]">
+                          <span>
+                            <span className="block text-sm font-bold text-white">{t.name}</span>
+                            <span className="block text-xs text-white/60">
+                              {t.duration} · {t.positioning}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-lg font-extrabold text-white">{t.price}</span>
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -205,8 +212,8 @@ export default function MentorshipPage() {
                       <a href="#apply" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-navy transition-colors hover:bg-ice">
                         {privateMentorship.cta} <ArrowRight size={16} aria-hidden="true" />
                       </a>
-                      <a href="#private" className="text-sm font-semibold text-sky hover:text-white">
-                        See the six weeks
+                      <a href="#tiers" className="text-sm font-semibold text-sky hover:text-white">
+                        Compare private tiers
                       </a>
                     </div>
                   </div>
@@ -265,7 +272,7 @@ export default function MentorshipPage() {
           <SectionHeading
             id="pm-title"
             invert
-            eyebrow="Private One-to-One · 6 weeks"
+            eyebrow="Private One-to-One"
             title="Built around you, not a syllabus."
             lede={privateMentorship.summary}
           />
@@ -277,7 +284,8 @@ export default function MentorshipPage() {
           </Reveal>
 
           {/* Six-week journey */}
-          <ol className="relative mt-14 grid gap-3 md:grid-cols-3 lg:grid-cols-6" aria-label="The six weeks">
+          <p className="mt-14 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-sky">How the six-week Standard programme runs · Premium and Elite extend it</p>
+          <ol className="relative mt-4 grid gap-3 md:grid-cols-3 lg:grid-cols-6" aria-label="The six weeks of Standard mentorship">
             {privateMentorship.weeks.map((w, i) => (
               <Reveal as="li" key={w.n} delay={0.04 * i} className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky font-mono text-xs font-bold text-navy">{i + 1}</span>
@@ -307,20 +315,135 @@ export default function MentorshipPage() {
               <p className="mt-3 text-sm leading-relaxed text-navy-soft">{privateMentorship.exclusivity}</p>
               <p className="mt-6 text-4xl font-extrabold tracking-tight">{privateMentorship.price.primary}</p>
               <p className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">{privateMentorship.price.note}</p>
-              <a href="#apply" className="mt-6 inline-flex min-h-12 w-fit items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white hover:bg-[#1b2c4f]">
-                {privateMentorship.cta} <ArrowRight size={16} aria-hidden="true" />
+              <a href="#tiers" className="mt-6 inline-flex min-h-12 w-fit items-center gap-2 rounded-full bg-navy px-6 text-sm font-semibold text-white hover:bg-[#1b2c4f]">
+                Compare private tiers <ArrowRight size={16} aria-hidden="true" />
               </a>
             </Reveal>
           </div>
         </Container>
       </section>
 
+      {/* ── PRIVATE TIERS ───────────────────────────────────────────────── */}
+      <Section id="tiers" labelledBy="tiers-title">
+        <SectionHeading
+          id="tiers-title"
+          eyebrow="Private mentorship tiers"
+          title="Same one-to-one model. Different depth and access."
+          lede="Every tier is private and built around you. Higher tiers add time, sessions, review depth and access. They don't add guaranteed outcomes."
+          className="mb-12"
+        />
+        <div className="grid items-stretch gap-5 lg:grid-cols-3">
+          {privateTiers.map((t, i) => {
+            const elite = t.id === "elite";
+            const premium = t.id === "premium";
+            const card = (
+              <article
+                id={`tier-${t.id}`}
+                aria-labelledby={`tier-${t.id}-title`}
+                className={`relative flex h-full scroll-mt-28 flex-col overflow-hidden p-7 sm:p-8 ${
+                  elite || premium ? "panel-navy" : "surface"
+                }`}
+              >
+                {elite && <div aria-hidden="true" className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-peach/20 blur-3xl" />}
+                <div className="relative flex items-start justify-between gap-3">
+                  <p className={`font-mono text-[0.6875rem] uppercase tracking-[0.14em] ${elite || premium ? "text-sky" : "text-sky-deep"}`}>
+                    Tier {String(i + 1).padStart(2, "0")} · {t.duration}
+                  </p>
+                  {t.badge && (
+                    <span className="shrink-0 rounded-full border border-peach/40 bg-peach/10 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-peach">
+                      {t.badge}
+                    </span>
+                  )}
+                </div>
+                <h3 id={`tier-${t.id}-title`} className={`relative mt-3 text-2xl font-extrabold ${elite || premium ? "text-white" : "text-navy"}`}>
+                  {t.name}
+                </h3>
+                <p className={`relative mt-2 text-sm ${elite || premium ? "text-white/70" : "text-navy-soft"}`}>{t.summary}</p>
+                <p className={`relative mt-6 text-5xl font-extrabold tracking-tight ${elite || premium ? "text-white" : "text-navy"}`}>{t.price}</p>
+                <div className={`relative mt-6 border-t pt-6 ${elite || premium ? "border-white/10" : "border-line"}`}>
+                  <p className={`text-xs font-bold uppercase tracking-[0.1em] ${elite || premium ? "text-white/60" : "text-muted"}`}>{t.addsLabel ?? "Includes"}</p>
+                  <ul className="mt-4 space-y-2.5">
+                    {t.adds.map((a) => (
+                      <li key={a} className={`flex gap-2.5 text-sm ${elite || premium ? "text-white/85" : "text-navy-soft"}`}>
+                        <Check size={16} className={`mt-0.5 shrink-0 ${elite ? "text-peach" : elite || premium ? "text-sky" : "text-sky-deep"}`} aria-hidden="true" />
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="relative mt-auto pt-8">
+                  <a
+                    href={`?tier=${t.id}#apply`}
+                    className={`inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-colors ${
+                      elite ? "bg-peach text-navy hover:bg-[#ffe6cf]" : premium ? "bg-sky text-navy hover:bg-[#86d2f8]" : "bg-navy text-white hover:bg-[#1b2c4f]"
+                    }`}
+                  >
+                    Apply for {t.name.split(" ")[0]} <ArrowRight size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            );
+            return (
+              <Reveal key={t.id} delay={0.06 * i} className="h-full">
+                <TiltCard className="h-full" max={3}>
+                  {elite ? (
+                    <div className="h-full rounded-[calc(var(--radius-card)+2px)] bg-[linear-gradient(140deg,#FFDAB8,rgba(255,218,184,0.15)_45%,rgba(112,200,245,0.25)_70%,#70C8F5)] p-[1.5px] shadow-[0_40px_80px_-40px_rgb(16_29_54/0.7)]">
+                      {card}
+                    </div>
+                  ) : (
+                    card
+                  )}
+                </TiltCard>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        <Reveal className="mt-10">
+          <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-soft)]">
+            <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
+              <caption className="sr-only">Comparison of the three private mentorship tiers</caption>
+              <thead>
+                <tr className="border-b border-line">
+                  <th scope="col" className="w-[22%] px-5 py-4">
+                    <span className="sr-only">Feature</span>
+                  </th>
+                  {privateTiers.map((t) => (
+                    <th key={t.id} scope="col" className={`px-5 py-4 text-sm font-extrabold ${t.id === "standard" ? "text-navy" : "bg-navy text-white"}`}>
+                      {t.name.replace(" Mentorship", "").replace(" Coaching", "")}
+                      <span className={`block font-mono text-[0.625rem] font-normal uppercase tracking-[0.12em] ${t.id === "standard" ? "text-sky-deep" : t.id === "elite" ? "text-peach" : "text-sky"}`}>
+                        {t.price}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tierComparison.map((r) => (
+                  <tr key={r.label} className="border-b border-line last:border-0">
+                    <th scope="row" className="px-5 py-3.5 font-semibold text-navy">
+                      {r.label}
+                    </th>
+                    {[r.standard, r.premium, r.elite].map((v, k) => (
+                      <td key={k} className={`px-5 py-3.5 ${k === 0 ? "text-navy-soft" : "bg-navy/[0.03] text-navy"}`}>
+                        {v === "—" ? <span className="text-muted">Not included</span> : v === "Included" ? <span className="inline-flex items-center gap-1.5 font-semibold"><Check size={15} className="text-sky-deep" aria-hidden="true" />Included</span> : v}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+        <p className="mt-5 text-sm text-muted">{privateMentorship.exclusivity}</p>
+      </Section>
+
       {/* ── COMPARISON ───────────────────────────────────────────────────── */}
       <Section labelledBy="compare-title">
         <SectionHeading
           id="compare-title"
           eyebrow="Compare"
-          title="Same philosophy. Different delivery."
+          title="Group or private?"
           lede="Both programmes teach the TOBYACE Model™. The difference is the learning environment, the structure and the level of individual attention."
           className="mb-12"
         />
@@ -384,7 +507,7 @@ export default function MentorshipPage() {
                     Apply for private mentorship.
                   </h2>
                   <p className="mt-5 text-white/70">
-                    A few short questions so I can understand where you are and whether the programme is the right fit. I review every application individually and reply with next steps.
+                    Choose a tier, or let me advise you. A few short questions help me understand where you are and which programme fits. I review every application individually and reply with next steps.
                   </p>
                   <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.05] p-5">
                     <p className="text-sm font-semibold text-white">Looking for The Liquidity Room instead?</p>

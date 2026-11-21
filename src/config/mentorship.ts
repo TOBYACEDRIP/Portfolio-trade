@@ -84,7 +84,7 @@ export const privateMentorship = {
   name: "Private Mentorship",
   positioning:
     "An exclusive, personalised programme offering direct access to my analytical thinking, trading framework and individual guidance.",
-  price: { primary: "$750", note: "Six-week programme" },
+  price: { primary: "From $750", note: "Three private tiers" },
   duration: "6 weeks",
   format: "Weekly private Zoom sessions",
   summary:
@@ -128,11 +128,101 @@ export const privateMentorship = {
   cta: "Apply for Private Mentorship",
 };
 
+/* ── PRIVATE TIERS ───────────────────────────────────────────────────────── */
+
+export type PrivateTier = {
+  id: "standard" | "premium" | "elite";
+  name: string;
+  price: string;
+  /** REPLACE with exact figures if you want them shown. */
+  duration: string;
+  positioning: string;
+  summary: string;
+  /** Label above `adds`, e.g. "Everything in Standard, plus". */
+  addsLabel?: string;
+  /** What this tier includes (Standard) or adds on top of the tier below. */
+  adds: string[];
+  badge?: string;
+};
+
+export const privateTiers: PrivateTier[] = [
+  {
+    id: "standard",
+    name: "Standard 1-on-1 Mentorship",
+    price: "$750",
+    duration: "6 weeks",
+    positioning: "Personalised six-week mentorship.",
+    summary: "The complete private programme: a structured six weeks built around your knowledge gaps.",
+    adds: [
+      "Six weeks of private mentorship",
+      "Weekly private Zoom sessions",
+      "Individual assessment of your current approach",
+      "Personalised chart reviews",
+      "Entry model and execution refinement",
+      "Risk management and psychology discussions",
+      "Direct Telegram access during the programme",
+      "Final progress review",
+    ],
+  },
+  {
+    id: "premium",
+    name: "Premium Private Mentorship",
+    price: "$1,200",
+    duration: "8 weeks",
+    positioning: "Deeper individual support and extended access.",
+    summary: "Two extra weeks, more sessions and deeper reviews, with a written plan for your development.",
+    addsLabel: "Everything in Standard, plus",
+    adds: [
+      "8 weeks instead of 6",
+      "Additional private sessions beyond the weekly call",
+      "Deeper trade reviews: entries, management and exits, trade by trade",
+      "Tailored written development plan",
+      "Review of your trading plan and journal",
+      "Backtesting review and feedback",
+      "Recordings of your private sessions",
+      "Extended Telegram support after the programme ends",
+    ],
+  },
+  {
+    id: "elite",
+    name: "Elite Extended Coaching",
+    price: "$2,000",
+    duration: "Longer than 8 weeks", // REPLACE with the exact length, e.g. "12 weeks"
+    positioning: "High-touch, extended private coaching.",
+    summary: "The longest and most intensive engagement, with ongoing reviews and priority access throughout.",
+    addsLabel: "Everything in Premium, plus",
+    badge: "Highest level of access",
+    adds: [
+      "Longer coaching engagement",
+      "Intensive individual feedback on your analysis and execution",
+      "Ongoing performance reviews of your journal and results",
+      "Live market walkthroughs together during the sessions",
+      "Prop firm challenge preparation and rule-based risk planning",
+      "Priority scheduling and priority Telegram responses",
+      "Follow-up check-ins after the programme ends",
+    ],
+  },
+];
+
+export const tierComparison: { label: string; standard: string; premium: string; elite: string }[] = [
+  { label: "Duration", standard: privateTiers[0].duration, premium: privateTiers[1].duration, elite: privateTiers[2].duration },
+  { label: "Private Zoom sessions", standard: "Weekly", premium: "Weekly + additional sessions", elite: "Extended schedule" },
+  { label: "Reviews", standard: "Personalised chart reviews", premium: "Deeper trade-by-trade reviews", elite: "Intensive feedback + ongoing performance reviews" },
+  { label: "Development plan", standard: "Personalised model development", premium: "Tailored written development plan", elite: "Tailored plan, reviewed throughout" },
+  { label: "Journal & backtesting review", standard: "—", premium: "Included", elite: "Included" },
+  { label: "Session recordings", standard: "—", premium: "Included", elite: "Included" },
+  { label: "Live market walkthroughs", standard: "—", premium: "—", elite: "Included" },
+  { label: "Prop firm preparation", standard: "—", premium: "—", elite: "Included" },
+  { label: "Telegram access", standard: "During the programme", premium: "Extended after the programme", elite: "Priority responses" },
+  { label: "Scheduling", standard: "Arranged weekly", premium: "Arranged weekly", elite: "Priority scheduling" },
+  { label: "Price", standard: "$750", premium: "$1,200", elite: "$2,000" },
+];
+
 /* ── COMPARISON ──────────────────────────────────────────────────────────── */
 
 export const comparison: { label: string; group: string; private: string }[] = [
   { label: "Learning environment", group: "Shared, collaborative classroom", private: "Private, one-to-one" },
-  { label: "Format", group: "8 live group classes on Zoom", private: "Weekly private Zoom sessions over 6 weeks" },
+  { label: "Format", group: "8 live group classes on Zoom", private: "Private Zoom sessions over 6 weeks or longer" },
   { label: "Curriculum", group: "Fixed, structured curriculum", private: "Personalised to your knowledge gaps and goals" },
   { label: "Schedule", group: "Scheduled group sessions", private: "Arranged individually" },
   { label: "Individual attention", group: "Questions and discussion in class", private: "Full attention in every session" },
@@ -140,7 +230,7 @@ export const comparison: { label: string; group: string; private: string }[] = [
   { label: "Chart reviews", group: "—", private: "Individual chart reviews" },
   { label: "Communication", group: "Private student community", private: "Direct Telegram access during the programme" },
   { label: "Enrolment", group: "Open to the group", private: "Limited — by application" },
-  { label: "Price", group: "$75 / ₦100,000", private: "$750" },
+  { label: "Price", group: "$75 / ₦100,000", private: "$750 · $1,200 · $2,000" },
   { label: "Best for", group: "Structured learning with other students", private: "Personalised instruction and focused feedback" },
 ];
 
@@ -160,8 +250,16 @@ export const faqs: { q: string; a: string }[] = [
     a: "Choose The Liquidity Room if you want a complete, structured curriculum and enjoy learning alongside others. Choose private mentorship if you already know the basics and want personalised instruction, chart reviews and direct feedback on your own reasoning. Both teach the same core philosophy.",
   },
   {
+    q: "What's the difference between the private tiers?",
+    a: "All three teach the same model one-to-one. Standard ($750) is the complete six-week programme. Premium ($1,200) runs for eight weeks and adds more sessions, deeper trade reviews, a written development plan and extended support. Elite ($2,000) is the longest engagement, with intensive feedback, ongoing performance reviews and priority access.",
+  },
+  {
+    q: "Which private tier should I choose?",
+    a: "Choose based on how much time and support you want, not on the results you hope for. If you're unsure, apply and choose \"Not sure — advise me\". I'll recommend the tier that fits where you are.",
+  },
+  {
     q: "Does private mentorship mean better results?",
-    a: "Not necessarily. The difference is the delivery: more individual attention, a programme tailored to you and direct feedback. It does not guarantee better trading performance.",
+    a: "Not necessarily, and neither does a higher tier. The difference is the delivery: more time, individual attention and access. None of the programmes guarantees better trading performance.",
   },
   {
     q: "Do I need experience?",
@@ -184,6 +282,13 @@ export const faqs: { q: string; a: string }[] = [
 /* ── APPLICATION FORM (private) ──────────────────────────────────────────── */
 
 export const applicationFields = [
+  {
+    id: "programme",
+    label: "Which programme are you interested in?",
+    type: "select",
+    required: true,
+    options: ["Standard 1-on-1 Mentorship ($750)", "Premium Private Mentorship ($1,200)", "Elite Extended Coaching ($2,000)", "Not sure — advise me"],
+  },
   { id: "name", label: "Your name", type: "text", required: true, autoComplete: "name" },
   { id: "contact", label: "Telegram username or email", type: "text", required: true, autoComplete: "email" },
   {
