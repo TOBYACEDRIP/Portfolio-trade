@@ -1,8 +1,8 @@
 # TheTobyAce — thetobyace.com
 
-The personal website of Toby, known as **TheTobyAce**: Forex trader, trading educator and mentor, entrepreneur, content creator and software developer.
+The digital home of **TheTobyAce**: Forex trader, technical analyst and trading educator, and the author of the **TOBYACE Model™**.
 
-Built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS 4**, **Framer Motion** and **MDX**.
+Built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS 4**, **Motion for React** (`framer-motion`) and **MDX**. Every page is statically generated.
 
 ---
 
@@ -16,98 +16,112 @@ npm run dev        # http://localhost:3000
 | Script | What it does |
 | --- | --- |
 | `npm run dev` | Local development server |
-| `npm run build` | Production build (every page is statically generated) |
+| `npm run build` | Production build |
 | `npm run start` | Serve the production build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript, no emit |
-| `npm run placeholders` | Lists every placeholder that still needs real information |
+| `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
+| `npm run placeholders` | Lists everything that still needs real information |
 
 ---
 
-## Before launch: replace the placeholders
+## Before launch: replace the demo content
 
-Nothing on the site is invented. Where real information was missing, there is a clearly marked `PLACEHOLDER` in the config. Run `npm run placeholders` to list them all. The main ones:
+The site ships with **demo content you can swap in VS Code**. Everything to change is marked `REPLACE` or `PLACEHOLDER`. Run `npm run placeholders` to list every spot.
 
-| What | Where |
-| --- | --- |
-| Social profile URLs (currently assume the handle `thetobyace`). Set `verified: true` once confirmed | `src/config/socials.ts` |
-| Email addresses | `src/config/site.ts` → `contact` |
-| Professional portrait (a monogram shows until you add one) | `src/config/site.ts` → `person.portrait` |
-| Location, full name (optional) | `src/config/site.ts` → `person` |
-| X handle for Twitter cards | `src/config/site.ts` → `seoDefaults.twitterHandle` |
-| Featured YouTube videos | `src/config/work.ts` → `featuredVideos` |
-| Mentorship intake status and class format | `src/config/mentorship.ts` |
-| Optional personal details in the About story | `src/config/about.ts` |
+| What | Where | How to replace |
+| --- | --- | --- |
+| Portrait photo | `public/images/portrait.jpg` | Overwrite the file with your photo, keeping the same name (portrait orientation, ~1200×1500) |
+| Telegram username | `src/config/socials.ts` → `telegramUsername` | Demo: `thetobyace` |
+| YouTube, X, Instagram, TikTok, LinkedIn | `src/config/socials.ts` → each `url` and `handle` | Demo: `thetobyace` on each platform |
+| Trading Library lessons | `src/config/library.ts` → `videos` | Change each `url` to the real video link (they currently open the channel) |
+| Lesson thumbnails | `public/images/library/*.jpg` | Overwrite with your own 1280×720 images, or use `youtubeId` for YouTube's thumbnail |
+| X handle for share cards | `src/config/site.ts` → `seoDefaults.twitterHandle` | Demo: `@thetobyace` |
+| Chart breakdowns | `src/content/insights/*.mdx` | Add your own (see below) |
+| Milestones (optional) | `src/config/experience.ts` → `milestones` | The timeline section is hidden until you add some |
+| Mentorship intake status (optional) | `src/config/mentorship.ts` → `status` | The badge is hidden until set |
 
-The three starter articles in `src/content/insights` are educational drafts written in the brand voice. Review them and edit them to match your own views before publishing.
+Setting any social `url` to `null` hides that link and shows the card as "coming soon". Setting `portrait` to `null` shows the "TA" monogram instead of a photo.
+
+Email is live: **akinshola.toby16@gmail.com**.
+
+The three starter articles in `src/content/insights` are educational drafts. Review them and edit to match your own views.
 
 ---
 
 ## Editing content
 
-All personal information and copy lives in **`src/config/`**, separate from the UI. You shouldn't need to touch a component to update the site.
+All copy and personal information lives in **`src/config/`**, separate from the UI.
 
 ```
 src/config/
-  site.ts        identity, SEO defaults, navigation, contact, risk disclaimer
-  socials.ts     every social link on the site (one list)
-  about.ts       /about story, philosophy, facts
-  method.ts      /method: the TOBYACE Method™ framework and glossary
-  work.ts        /work items and featured YouTube videos
-  mentorship.ts  /mentorship: The Liquidity Room
-  insights.ts    article categories
+  site.ts         identity, SEO, navigation, email, risk disclaimer
+  socials.ts      every social link and the Telegram username (one list)
+  model.ts        TOBYACE Model™: Market Narrative + the four pillars
+  library.ts      Trading Library categories and videos
+  experience.ts   /experience editorial content and milestones
+  mentorship.ts   The Liquidity Room
+  insights.ts     Market Insights categories
 ```
 
-### Add a profile photo
+### Replace the portrait
 
-1. Put the image in `public/images/`, e.g. `public/images/toby.jpg` (portrait orientation, at least 1200px tall).
-2. Set `portrait: "/images/toby.jpg"` in `src/config/site.ts`.
+Overwrite `public/images/portrait.jpg` with your photo (same filename). Or add a new file and point `portrait` in `src/config/site.ts` at it. It's used on the homepage, the Experience page and in structured data.
 
-It's used on the home page, the About page and in structured data, and is optimised automatically.
+### Add a social profile or Telegram
 
-### Add an article
-
-Create **one file** at `src/content/insights/my-article-slug.mdx`. The filename becomes the URL (`/insights/my-article-slug`).
-
-```mdx
----
-title: "Your Article Title"
-description: "One or two sentences. Used for SEO and social previews."
-date: "2026-12-01"
-category: "market-structure"   # an id from src/config/insights.ts
-tags: ["Liquidity", "Prop Firms"]
-# updated: "2026-12-10"        # optional
-# draft: true                  # optional: hidden in production builds
----
-
-Your content in Markdown. `## Headings` build the table of contents automatically.
-
-<Callout title="Key idea">Callouts are available in every article.</Callout>
+```ts
+// src/config/socials.ts
+export const telegramUsername = "yourusername";            // opens a direct chat: t.me/yourusername
+{ platform: "youtube", url: "https://www.youtube.com/@yourhandle", handle: "@yourhandle", ... }
 ```
 
-Reading time, the article page, its Open Graph image, sitemap entry, related articles, previous/next links and the homepage "Featured trading content" card all update automatically.
+### Edit or add a Trading Library lesson
 
-Categories: `forex`, `market-structure`, `liquidity`, `psychology`, `prop-firms`, `entrepreneurship`, `personal-development`, `technology`. Add more in `src/config/insights.ts`.
-
-### Add a piece of work
-
-Add an object to `work` in `src/config/work.ts`:
+Each lesson is one object in `videos` in `src/config/library.ts`:
 
 ```ts
 {
-  id: "gbpusd-breakdown",
-  title: "GBPUSD — sweep into a daily FVG",
-  description: "Full breakdown from weekly bias to execution.",
-  category: "breakdowns",            // breakdowns | education | analysis | collaborations | projects
-  href: "https://www.youtube.com/watch?v=…",
-  image: "/images/work/gbpusd.jpg",  // optional: a designed cover is generated if omitted
-  meta: "YouTube",
+  title: "Order Blocks: what makes one valid",
+  description: "What the lesson covers.",
+  category: "points-of-interest",   // market-structure | liquidity | points-of-interest | execution | fundamentals | psychology | risk
+  url: "https://www.youtube.com/watch?v=abc123XYZ",
+  thumbnail: "/images/library/order-blocks.jpg",   // your own image, or…
+  // youtubeId: "abc123XYZ",                       // …use YouTube's thumbnail instead
+  duration: "8:42",                 // optional
+  featured: true,                   // optional: shown first and on the homepage
 }
 ```
 
-### Add a featured video
+### Add a market analysis (chart breakdown)
 
-Add `{ youtubeId, title, category }` to `featuredVideos` in `src/config/work.ts`. The first one is shown on the homepage YouTube card, and all of them appear on `/work`.
+1. Put the annotated chart in `public/images/insights/`.
+2. Create **one file**, `src/content/insights/eurusd-weekly-outlook.mdx`. The filename becomes the URL.
+
+```mdx
+---
+title: "EURUSD — sweep of weekly lows into an H4 FVG"
+description: "One or two sentences for SEO and social previews."
+date: "2026-12-01"
+type: "analysis"
+category: "forex-analysis"     # forex-analysis | technical-analysis | market-structure | liquidity | fundamental-context | psychology
+instrument: "EURUSD"
+timeframe: "H4"
+bias: "bullish"                # bullish | bearish | neutral — shown as an *expectation*
+chart: "/images/insights/eurusd-h4.png"
+chartAlt: "EURUSD H4 chart annotated with the sweep, MSS and FVG"
+poi: "H4 fair value gap at 1.0820–1.0835"
+narrative:
+  where: "Daily bullish, price in discount of the H4 dealing range…"
+  happened: "Sell-side liquidity below last week's low was taken…"
+  draw: "Buy-side liquidity resting above the equal highs at…"
+  confirmation: "M15 MSS with displacement away from the FVG…"
+  invalidation: "A close below the sweep low at…"
+tags: ["EURUSD", "Liquidity"]
+---
+
+Your written breakdown. `## Headings` build the table of contents.
+```
+
+The narrative is rendered as a structured panel with a clear "directional expectation, not a confirmed trade" notice. Analysis entries are featured first on the homepage, and reading time, the social image, sitemap entry and related posts are all generated automatically.
 
 ---
 
@@ -115,61 +129,54 @@ Add `{ youtubeId, title, category }` to `featuredVideos` in `src/config/work.ts`
 
 ```
 src/
-  app/                    routes (server components by default)
-    page.tsx              Bento homepage
-    about/ method/ work/ insights/ mentorship/ contact/
-    insights/[slug]/      MDX article pages + per-article OG image
-    opengraph-image.tsx   default social card (each section has its own)
-    icon.tsx apple-icon.tsx manifest.ts icons/[size]/
-    sitemap.ts robots.ts not-found.tsx error.tsx global-error.tsx loading.tsx
+  app/                       routes: / /model /library /insights /experience /connect /mentorship
   components/
-    layout/               SiteHeader (responsive, accessible mobile menu), SiteFooter
-    ui/                   BentoCard, primitives, Reveal, FilterBar, Graphics, CtaBanner…
-    insights/             MDX components, article list, reading progress
-    work/                 filterable work grid
-    icons/SocialIcon.tsx  platform marks (Simple Icons, CC0)
-  config/                 all site content (see above)
-  content/insights/       MDX articles
-  lib/                    insights loader, SEO helpers, OG image renderer
-  assets/fonts/           Instrument Serif (SIL OFL) for OG images
+    charts/                  original chart illustrations: HeroChart, NarrativeExplorer,
+                             ModelDiagram, PillarVisuals, PriceDivider (illustrative, not market data)
+    connect/ConnectHub.tsx   Telegram + email + social platforms
+    library/ insights/       video cards, filters, narrative panel, MDX typography
+    layout/                  header (accessible mobile menu), footer, wordmark
+    ui/                      primitives, BentoCard, TiltCard, Reveal, FilterBar…
+  config/                    all content (see above)
+  content/insights/          MDX articles and analyses
+  lib/                       content loader, SEO helpers, OG image renderer
+  assets/fonts/              Plus Jakarta Sans (SIL OFL), used for generated social images
 ```
-
-Client components are used only where interaction needs them: the header/mobile menu, entrance animations, filters, the copy-email button and the reading progress bar.
 
 ## Design system
 
-Tokens are defined in `src/app/globals.css` (`@theme`) and available as Tailwind utilities:
+Defined in `src/app/globals.css` (`@theme`), available as Tailwind utilities:
 
-| Token | Value | Utility |
+| Token | Hex | Utility |
 | --- | --- | --- |
-| Background | `#0B0B0B` | `bg-bg` |
-| Surface | `#151515` | `bg-surface` |
-| Card | `#1B1B1B` | `bg-card` |
-| Accent (champagne gold) | `#C6A66B` | `text-gold`, `border-gold` |
-| Primary text | `#F5F5F5` | `text-fg` |
-| Secondary text | `#A0A0A0` | `text-muted` |
+| Cloud White (canvas) | `#F4F7FA` | `bg-canvas` |
+| Pure White (cards) | `#FFFFFF` | `bg-surface`, `.surface` |
+| Ice Blue | `#E5F3FC` | `bg-ice`, `.panel-ice` |
+| Sky Blue (accent) | `#70C8F5` | `bg-sky` (fills); `text-sky-deep` for accessible text |
+| Soft Orange | `#FFDAB8` | `bg-peach` (fills); `text-peach-ink` for accessible text |
+| Midnight Navy | `#101D36` | `text-navy`, `.panel-navy` |
 
-Type: **Instrument Serif** (display), **Inter** (body), **JetBrains Mono** (labels), all loaded with `next/font`.
+Type: **Plus Jakarta Sans** (headings), **Inter** (body), **JetBrains Mono** (technical labels).
+
+Motion: entrance reveals, a pointer tilt on cards (mouse only), animated chart illustrations, route transitions and a self-drawing price divider. All of it respects `prefers-reduced-motion`.
 
 ## SEO
 
-- Title: *TheTobyAce | Trader, Entrepreneur & Creator*. Each page uses the `%s | TheTobyAce` template.
-- A canonical URL, Open Graph and X/Twitter card metadata on every page, built by `pageMetadata()` in `src/lib/seo.ts`.
-- Generated Open Graph images for the site, each section and each article.
-- JSON-LD: `Person` and `WebSite` site-wide; `Article` and `BreadcrumbList` on articles.
-- `sitemap.xml` and `robots.txt` are generated from config and content.
-- To verify with Google Search Console, set `seoDefaults.googleVerification`.
+- Title *TheTobyAce | Forex Trader & Technical Analyst*, with page-specific titles and descriptions
+- Canonical URLs, Open Graph and X cards, and generated social images for every page and article
+- JSON-LD: `Person` and `WebSite` site-wide; `Article`/`AnalysisNewsArticle` and `BreadcrumbList` on insights
+- `sitemap.xml`, `robots.txt`, web manifest and favicons, all generated
+
+The domain is not connected yet; see Deployment.
 
 ## Deployment
 
-Designed for Vercel (Vercel Analytics and Speed Insights are included and only activate there).
+1. Import the repository at **vercel.com** (Next.js is auto-detected).
+2. Add the domains `thetobyace.com` and `www.thetobyace.com`; `www` redirects to the apex.
+3. No environment variables are required.
 
-1. Import the repository in Vercel.
-2. Add the domains `thetobyace.com` and `www.thetobyace.com`. `www` redirects to the apex (`next.config.ts`).
-3. Deploy. No environment variables are required.
-
-Legacy routes from the original template (`/blog`, `/projects`) redirect permanently to `/insights` and `/work`.
+Old routes redirect permanently: `/method` → `/model`, `/about` → `/experience`, `/work` → `/library`, `/contact` → `/connect`, `/blog` → `/insights`.
 
 ## Credits
 
-Originally based on [Vighnesh-Gaddam/portfolio](https://github.com/Vighnesh-Gaddam/portfolio) (MIT), and since redesigned and rebuilt. Platform icons from [Simple Icons](https://simpleicons.org) (CC0). Instrument Serif by Rodrigo Fuenzalida & Jordan Egstad (SIL Open Font License).
+Originally started from [Vighnesh-Gaddam/portfolio](https://github.com/Vighnesh-Gaddam/portfolio) (MIT); none of its UI remains. Platform icons from [Simple Icons](https://simpleicons.org) (CC0).

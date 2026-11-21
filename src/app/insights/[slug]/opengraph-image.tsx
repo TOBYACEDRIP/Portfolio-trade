@@ -15,7 +15,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params;
   const post = getInsight(slug);
   return renderOgImage({
-    eyebrow: post ? getCategoryLabel(post.category) : "Insights",
+    eyebrow: post ? [post.instrument, post.timeframe].filter(Boolean).join(" · ") || getCategoryLabel(post.category) : "Market Insights",
     title: post?.title ?? "Insights",
     footer: post ? `${formatDate(post.date)} · ${post.readingTime} min read` : undefined,
   });

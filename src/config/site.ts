@@ -3,9 +3,8 @@
  *  SITE CONFIGURATION — TheTobyAce
  * ─────────────────────────────────────────────────────────────────────────────
  *  Identity, SEO, navigation and contact details.
- *
- *  Anything marked `PLACEHOLDER` is an editable stand-in, not real information.
- *  Run `npm run placeholders` to list every one that still needs replacing.
+ *  Anything marked `PLACEHOLDER` still needs real information.
+ *  Run `npm run placeholders` to list them.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -13,88 +12,69 @@ export const site = {
   url: "https://thetobyace.com",
   domain: "thetobyace.com",
   name: "TheTobyAce",
-  title: "TheTobyAce | Trader, Entrepreneur & Creator",
+  title: "TheTobyAce | Forex Trader & Technical Analyst",
   titleTemplate: "%s | TheTobyAce",
   description:
-    "The personal website of Toby — known as TheTobyAce. Forex trader, trading educator and mentor, entrepreneur, content creator and software developer.",
+    "Explore the trading philosophy, technical analysis, market insights and TOBYACE Model of TheTobyAce. Learn about market structure, liquidity, price delivery and disciplined trading.",
   locale: "en_GB",
   keywords: [
     "TheTobyAce",
-    "Toby",
+    "TOBYACE Model",
     "Forex trader",
-    "Forex education",
-    "TOBYACE Method",
-    "The Liquidity Room",
+    "technical analysis",
     "market structure",
     "liquidity",
-    "trading mentorship",
+    "market narrative",
+    "price delivery",
     "trading psychology",
+    "trading education",
   ],
-  /** Accent colour used for browser UI (theme-color). */
-  themeColor: "#0B0B0B",
+  themeColor: "#F4F7FA",
 } as const;
 
 export const person = {
-  /** Display name used in headings. */
-  name: "Toby",
-  /** Brand / professional name. */
   brand: "TheTobyAce",
-  /** PLACEHOLDER — add your full legal name if you want it in structured data. Leave "" to omit. */
+  /** Short name used in copy. */
+  name: "Toby",
+  /** PLACEHOLDER — full name for structured data, only if you want it public. */
   fullName: "",
-  /** Short roles, shown as a list in the hero and used in structured data. */
-  roles: [
-    "Forex Trader",
-    "Trading Educator & Mentor",
-    "Entrepreneur",
-    "Content Creator",
-    "Software Developer",
-  ],
-  /** One-line positioning statement. */
-  tagline: "Trader. Educator. Builder.",
-  /** Short introduction used in the homepage hero. */
-  intro:
-    "I trade the Forex markets, teach the process behind it, and build things — businesses, content and software — with the same discipline.",
+  identity: ["Forex Trader", "Technical Analyst", "Market Structure", "Trading Psychology"],
+  jobTitle: "Forex Trader & Technical Analyst",
   /**
-   * Profile image. Put the file in /public/images and set the path, e.g. "/images/toby.jpg".
-   * PLACEHOLDER — while this is null, an elegant monogram is shown instead of a photo.
+   * REPLACE — demo portrait. Swap the file at /public/images/portrait.jpg for your
+   * own photo (same filename, portrait orientation, ~1200×1500), or point this at
+   * a different file. Set to null to show the "TA" monogram instead.
    */
-  portrait: null as string | null,
-  portraitAlt: "Portrait of Toby, TheTobyAce",
-  /** PLACEHOLDER — e.g. "London, United Kingdom". Leave "" to hide everywhere. */
-  location: "",
-  /** Academic background (real, from the brief). */
-  education: "Electrical & Electronics Engineering",
+  portrait: "/images/portrait.jpg" as string | null,
+  portraitAlt: "Portrait of TheTobyAce",
 } as const;
 
 export type NavItem = { label: string; href: string; description: string };
 
 export const navigation: NavItem[] = [
-  { label: "About", href: "/about", description: "Background, engineering, trading and philosophy." },
-  { label: "Method", href: "/method", description: "The TOBYACE Method™ — how I read the market." },
-  { label: "Work", href: "/work", description: "Breakdowns, education, collaborations and projects." },
-  { label: "Insights", href: "/insights", description: "Long-form writing on markets, business and growth." },
-  { label: "Mentorship", href: "/mentorship", description: "The Liquidity Room — structured trading education." },
-  { label: "Contact", href: "/contact", description: "Business, collaboration and mentorship enquiries." },
+  { label: "Home", href: "/", description: "Start here." },
+  { label: "TOBYACE Model", href: "/model", description: "Market Narrative and the four pillars of the framework." },
+  { label: "Trading Library", href: "/library", description: "Curated video lessons by concept." },
+  { label: "Market Insights", href: "/insights", description: "Chart breakdowns and market observations." },
+  { label: "Experience", href: "/experience", description: "How the approach was developed." },
+  { label: "Connect", href: "/connect", description: "Telegram, email and social platforms." },
+];
+
+/** Secondary links shown in the footer only. */
+export const secondaryNavigation: NavItem[] = [
+  { label: "The Liquidity Room", href: "/mentorship", description: "Structured trading education." },
 ];
 
 export const contact = {
-  /** PLACEHOLDER — confirm the real inbox before launch. */
-  email: "hello@thetobyace.com",
-  /** PLACEHOLDER — used for business and collaboration enquiries. Set it to the same address as `email` if you only use one inbox. */
-  businessEmail: "business@thetobyace.com",
-  /** Typical reply time shown on the contact page. Leave "" to hide. */
-  responseTime: "",
+  email: "akinshola.toby16@gmail.com",
 } as const;
 
 export const seoDefaults = {
-  /** Default Open Graph image route (generated by app/opengraph-image.tsx). */
-  ogImage: "/opengraph-image",
-  /** PLACEHOLDER — X handle including @, used in Twitter card metadata. */
+  /** REPLACE — your X handle including "@" (used in X/Twitter share cards). */
   twitterHandle: "@thetobyace",
-  /** Optional Google Search Console verification token. Leave "" to omit. */
+  /** Optional Google Search Console verification token. */
   googleVerification: "",
 } as const;
 
-/** Legal / disclaimer copy shown in the footer and on trading-related pages. */
 export const riskDisclaimer =
-  "Trading foreign exchange and leveraged products carries a high level of risk and may not be suitable for everyone. Nothing on this website is financial advice. Educational content is provided for informational purposes only, and past performance is not indicative of future results.";
+  "Trading foreign exchange and leveraged products carries a high level of risk and may not be suitable for everyone. Content on this website is educational and is not financial advice or a recommendation to buy or sell any instrument. Market analysis describes directional expectations, not certainties. Past performance is not indicative of future results.";

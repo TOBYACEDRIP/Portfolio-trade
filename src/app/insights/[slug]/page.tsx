@@ -6,12 +6,14 @@ import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getCategoryLabel } from "@/config/insights";
 import { person, site } from "@/config/site";
-import { getAdjacentInsights, getAllInsights, getInsight, getRelatedInsights, extractToc } from "@/lib/insights";
+import { extractToc, getAdjacentInsights, getAllInsights, getInsight, getRelatedInsights } from "@/lib/insights";
 import { formatDate } from "@/lib/format";
 import { absoluteUrl, jsonLdScript, pageMetadata } from "@/lib/seo";
 import { mdxComponents } from "@/components/insights/mdx";
 import { ReadingProgress } from "@/components/insights/ReadingProgress";
-import { Container, Tag } from "@/components/ui/primitives";
+import { NarrativePanel } from "@/components/insights/NarrativePanel";
+import { InsightCard } from "@/components/insights/InsightCard";
+import { Aurora, Container } from "@/components/ui/primitives";
 import { CtaBanner } from "@/components/ui/CtaBanner";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -34,7 +36,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     publishedTime: post.date,
     modifiedTime: post.updated,
     tags: post.tags,
-    image: post.image,
   });
 }
 
@@ -46,10 +47,11 @@ export default async function InsightPage({ params }: Props) {
   const toc = extractToc(post.content);
   const { newer, older } = getAdjacentInsights(slug);
   const related = getRelatedInsights(slug);
+  const url = absoluteUrl(`/insights/${post.slug}`);
 
   const articleLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": post.type === "analysis" ? "AnalysisNewsArticle" : "Article",
     headline: post.title,
     description: post.description,
     datePublished: post.date,
@@ -57,20 +59,19 @@ export default async function InsightPage({ params }: Props) {
     wordCount: post.wordCount,
     articleSection: getCategoryLabel(post.category),
     keywords: post.tags.join(", "),
-    url: absoluteUrl(`/insights/${post.slug}`),
-    mainEntityOfPage: absoluteUrl(`/insights/${post.slug}`),
-    image: absoluteUrl(post.image ?? `/insights/${post.slug}/opengraph-image`),
+    url,
+    mainEntityOfPage: url,
+    image: absoluteUrl(post.chart ?? `/insights/${post.slug}/opengraph-image`),
     author: { "@type": "Person", "@id": `${site.url}/#person`, name: person.brand, url: site.url },
     publisher: { "@type": "Person", "@id": `${site.url}/#person`, name: person.brand },
   };
-
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-      { "@type": "ListItem", position: 2, name: "Insights", item: absoluteUrl("/insights") },
-      { "@type": "ListItem", position: 3, name: post.title, item: absoluteUrl(`/insights/${post.slug}`) },
+      { "@type": "ListItem", position: 2, name: "Market Insights", item: absoluteUrl("/insights") },
+      { "@type": "ListItem", position: 3, name: post.title, item: url },
     ],
   };
 
@@ -82,40 +83,47 @@ export default async function InsightPage({ params }: Props) {
 
       <article>
         <header className="relative overflow-hidden border-b border-line">
-          <div className="grid-texture pointer-events-none absolute inset-0" aria-hidden="true" />
-          <Container className="relative pt-32 pb-14 sm:pt-40 sm:pb-16">
+          <Aurora />
+          <div className="chart-grid chart-grid-fade pointer-events-none absolute inset-0" aria-hidden="true" />
+          <Container className="relative pt-28 pb-14 sm:pt-36 sm:pb-16">
             <nav aria-label="Breadcrumb">
-              <Link href="/insights" className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg">
-                <ArrowLeft size={15} aria-hidden="true" /> All insights
-              </Link>
+              <ol className="flex flex-wrap items-center gap-2 text-sm text-muted">
+                <li>
+                  <Link href="/" className="hover:text-navy">Home</Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li>
+                  <Link href="/insights" className="hover:text-navy">Market Insights</Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li aria-current="page" className="max-w-[16rem] truncate text-navy">{post.title}</li>
+              </ol>
             </nav>
-            <p className="eyebrow mt-10 text-gold!">{getCategoryLabel(post.category)}</p>
-            <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[1.02] tracking-tight text-fg sm:text-6xl lg:text-7xl">
-              {post.title}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">{post.description}</p>
+            <div className="mt-10 flex flex-wrap gap-2">
+              <span className="rounded-full bg-navy px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white">{getCategoryLabel(post.category)}</span>
+              {post.instrument && <span className="rounded-full border border-line-strong bg-white px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-navy">{post.instrument}</span>}
+              {post.timeframe && <span className="rounded-full border border-line-strong bg-white px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-navy-soft">{post.timeframe}</span>}
+            </div>
+            <h1 className="mt-6 max-w-4xl text-4xl font-extrabold leading-[1.05] text-navy sm:text-6xl">{post.title}</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-navy-soft sm:text-xl">{post.description}</p>
             <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4 font-mono text-[0.6875rem] uppercase tracking-[0.14em]">
               <div>
-                <dt className="text-subtle">Published</dt>
-                <dd className="mt-1.5 text-fg">
-                  <time dateTime={post.date}>{formatDate(post.date)}</time>
-                </dd>
+                <dt className="text-muted">Published</dt>
+                <dd className="mt-1.5 text-navy"><time dateTime={post.date}>{formatDate(post.date)}</time></dd>
               </div>
               {post.updated && (
                 <div>
-                  <dt className="text-subtle">Updated</dt>
-                  <dd className="mt-1.5 text-fg">
-                    <time dateTime={post.updated}>{formatDate(post.updated)}</time>
-                  </dd>
+                  <dt className="text-muted">Updated</dt>
+                  <dd className="mt-1.5 text-navy"><time dateTime={post.updated}>{formatDate(post.updated)}</time></dd>
                 </div>
               )}
               <div>
-                <dt className="text-subtle">Reading time</dt>
-                <dd className="mt-1.5 text-fg">{post.readingTime} min</dd>
+                <dt className="text-muted">Reading time</dt>
+                <dd className="mt-1.5 text-navy">{post.readingTime} min</dd>
               </div>
               <div>
-                <dt className="text-subtle">Author</dt>
-                <dd className="mt-1.5 text-fg">{person.brand}</dd>
+                <dt className="text-muted">Author</dt>
+                <dd className="mt-1.5 text-navy">{person.brand}</dd>
               </div>
             </dl>
           </Container>
@@ -123,34 +131,26 @@ export default async function InsightPage({ params }: Props) {
 
         <Container className="py-14 sm:py-20">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-20">
-            <div className="min-w-0 max-w-[44rem]">
+            <div className="min-w-0 max-w-[46rem]">
+              <NarrativePanel post={post} />
+
               {toc.length > 1 && (
                 <details className="surface mb-10 p-5 lg:hidden">
                   <summary className="eyebrow cursor-pointer">Contents</summary>
                   <ol className="mt-4 space-y-2.5 text-sm">
                     {toc.map((h) => (
-                      <li key={h.id}>
-                        <a href={`#${h.id}`} className="text-muted hover:text-fg">
-                          {h.text}
-                        </a>
-                      </li>
+                      <li key={h.id}><a href={`#${h.id}`} className="text-navy-soft hover:text-sky-deep">{h.text}</a></li>
                     ))}
                   </ol>
                 </details>
               )}
 
-              <MDXRemote
-                source={post.content}
-                components={mdxComponents}
-                options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
-              />
+              <MDXRemote source={post.content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
 
               {post.tags.length > 0 && (
                 <ul className="mt-14 flex flex-wrap gap-2 border-t border-line pt-8" aria-label="Tags">
                   {post.tags.map((t) => (
-                    <li key={t}>
-                      <Tag>{t}</Tag>
-                    </li>
+                    <li key={t} className="rounded-full border border-line-strong bg-white px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-navy-soft">{t}</li>
                   ))}
                 </ul>
               )}
@@ -163,9 +163,7 @@ export default async function InsightPage({ params }: Props) {
                   <ol className="space-y-3 border-l border-line text-sm">
                     {toc.map((h) => (
                       <li key={h.id}>
-                        <a href={`#${h.id}`} className="-ml-px block border-l border-transparent pl-4 text-muted transition-colors hover:border-gold hover:text-fg">
-                          {h.text}
-                        </a>
+                        <a href={`#${h.id}`} className="-ml-px block border-l-2 border-transparent pl-4 text-navy-soft transition-colors hover:border-sky hover:text-navy">{h.text}</a>
                       </li>
                     ))}
                   </ol>
@@ -176,26 +174,21 @@ export default async function InsightPage({ params }: Props) {
         </Container>
       </article>
 
-      {/* Previous / next */}
       {(newer || older) && (
-        <nav aria-label="More articles" className="border-t border-line">
-          <Container className="grid gap-px py-0 sm:grid-cols-2">
+        <nav aria-label="More insights" className="border-t border-line bg-white">
+          <Container className="grid sm:grid-cols-2">
             {older ? (
               <Link href={`/insights/${older.slug}`} className="group py-10 sm:pr-10">
-                <span className="eyebrow inline-flex items-center gap-2">
-                  <ArrowLeft size={13} aria-hidden="true" /> Previous
-                </span>
-                <span className="mt-3 block font-display text-2xl leading-snug text-fg group-hover:text-gold-soft">{older.title}</span>
+                <span className="eyebrow inline-flex items-center gap-2"><ArrowLeft size={13} aria-hidden="true" /> Previous</span>
+                <span className="mt-3 block text-xl font-bold leading-snug text-navy group-hover:text-sky-deep">{older.title}</span>
               </Link>
             ) : (
               <span />
             )}
             {newer && (
               <Link href={`/insights/${newer.slug}`} className="group border-line py-10 sm:border-l sm:pl-10 sm:text-right">
-                <span className="eyebrow inline-flex items-center gap-2">
-                  Next <ArrowRight size={13} aria-hidden="true" />
-                </span>
-                <span className="mt-3 block font-display text-2xl leading-snug text-fg group-hover:text-gold-soft">{newer.title}</span>
+                <span className="eyebrow inline-flex items-center gap-2">Next <ArrowRight size={13} aria-hidden="true" /></span>
+                <span className="mt-3 block text-xl font-bold leading-snug text-navy group-hover:text-sky-deep">{newer.title}</span>
               </Link>
             )}
           </Container>
@@ -205,35 +198,21 @@ export default async function InsightPage({ params }: Props) {
       {related.length > 0 && (
         <section aria-labelledby="related-title" className="border-t border-line py-16 sm:py-20">
           <Container>
-            <h2 id="related-title" className="eyebrow">
-              Related reading
-            </h2>
+            <h2 id="related-title" className="text-2xl font-extrabold text-navy">Related insights</h2>
             <ul className="mt-8 grid gap-4 md:grid-cols-2">
               {related.map((r) => (
-                <li key={r.slug}>
-                  <Link href={`/insights/${r.slug}`} className="surface group flex h-full flex-col p-7 transition-colors hover:border-line-strong">
-                    <p className="eyebrow text-gold!">{getCategoryLabel(r.category)}</p>
-                    <p className="mt-4 font-display text-2xl leading-snug text-fg">{r.title}</p>
-                    <p className="mt-3 text-sm text-muted">{r.description}</p>
-                    <p className="mt-auto pt-6 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-subtle">{r.readingTime} min read</p>
-                  </Link>
-                </li>
+                <li key={r.slug}><InsightCard post={r} /></li>
               ))}
             </ul>
           </Container>
         </section>
       )}
 
-      <div className="pt-8" />
       <CtaBanner
-        eyebrow="Go deeper"
-        title={
-          <>
-            Learn the full framework in <span className="italic text-gold">The Liquidity Room.</span>
-          </>
-        }
-        primary={{ label: "About the mentorship", href: "/mentorship" }}
-        secondary={{ label: "The TOBYACE Method", href: "/method" }}
+        eyebrow="The framework"
+        title="Every insight follows the same model."
+        primary={{ label: "Explore the TOBYACE Model", href: "/model" }}
+        secondary={{ label: "Trading Library", href: "/library" }}
       />
     </>
   );

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { person, seoDefaults, site } from "@/config/site";
-import { socialProfiles } from "@/config/socials";
+import { contact, person, seoDefaults, site } from "@/config/site";
+import { liveProfiles } from "@/config/socials";
 
 type PageMetaInput = {
-  /** Page title — the site template appends " | TheTobyAce". Omit for the home page. */
+  /** Page title — the template appends " | TheTobyAce". Omit for the home page. */
   title?: string;
   description: string;
   /** Path beginning with "/", used for the canonical URL. */
@@ -20,14 +20,13 @@ export function absoluteUrl(path = "/"): string {
   return new URL(path, site.url).toString();
 }
 
+const handle = seoDefaults.twitterHandle || undefined;
+
 /**
- * Builds consistent metadata for every page: canonical URL, Open Graph and
- * X/Twitter cards. Open Graph images come from `opengraph-image.tsx` files,
- * which Next.js wires in automatically, so they're only set here when a page
- * provides a custom one.
+ * Consistent per-page metadata: canonical URL, Open Graph and X/Twitter cards.
+ * OG images come from `opengraph-image.tsx` route files unless `image` is set.
  */
 export function pageMetadata(input: PageMetaInput): Metadata {
-  const title = input.title ?? site.title;
   const fullTitle = input.title ? site.titleTemplate.replace("%s", input.title) : site.title;
   const images = input.image ? [{ url: input.image, width: 1200, height: 630, alt: fullTitle }] : undefined;
 
@@ -42,20 +41,22 @@ export function pageMetadata(input: PageMetaInput): Metadata {
       siteName: site.name,
       locale: site.locale,
       type: input.type ?? "website",
-      ...(images && { images }),
-      ...(input.type === "article" && {
-        publishedTime: input.publishedTime,
-        modifiedTime: input.modifiedTime ?? input.publishedTime,
-        authors: [person.brand],
-        tags: input.tags,
-      }),
+      ...(images ? { images } : {}),
+      ...(input.type === "article"
+        ? {
+            publishedTime: input.publishedTime,
+            modifiedTime: input.modifiedTime ?? input.publishedTime,
+            authors: [person.brand],
+            tags: input.tags,
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: title === site.title ? site.title : fullTitle,
+      title: fullTitle,
       description: input.description,
-      creator: seoDefaults.twitterHandle,
-      ...(images && { images: images.map((i) => i.url) }),
+      ...(handle ? { creator: handle } : {}),
+      ...(images ? { images: images.map((i) => i.url) } : {}),
     },
   };
 }
@@ -66,23 +67,23 @@ export function personJsonLd() {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": `${site.url}/#person`,
-    name: person.fullName || person.name,
-    alternateName: person.brand,
+    name: person.fullName || person.brand,
+    alternateName: person.fullName ? person.brand : undefined,
     url: site.url,
-    ...(person.portrait && { image: absoluteUrl(person.portrait) }),
-    jobTitle: person.roles[0],
+    email: `mailto:${contact.email}`,
+    ...(person.portrait ? { image: absoluteUrl(person.portrait) } : {}),
+    jobTitle: person.jobTitle,
     description: site.description,
     knowsAbout: [
       "Forex trading",
+      "Technical analysis",
       "Market structure",
       "Liquidity",
-      "Trading psychology",
+      "Fundamental analysis",
       "Risk management",
-      "Entrepreneurship",
-      "Software development",
+      "Trading psychology",
     ],
-    hasOccupation: person.roles.map((name) => ({ "@type": "Occupation", name })),
-    sameAs: socialProfiles.map((s) => s.href),
+    ...(liveProfiles.length ? { sameAs: liveProfiles.map((s) => s.url) } : {}),
   };
 }
 
@@ -99,7 +100,7 @@ export function websiteJsonLd() {
   };
 }
 
-/** Safely serialise JSON-LD (escapes `<` to prevent breaking out of the script tag). */
+/** Safely serialise JSON-LD (escapes `<` so it can't break out of the script tag). */
 export function jsonLdScript(data: unknown): { __html: string } {
   return { __html: JSON.stringify(data).replace(/</g, "\\u003c") };
 }

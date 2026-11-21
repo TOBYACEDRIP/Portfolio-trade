@@ -2,92 +2,81 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *  SOCIAL LINKS — single source of truth
  * ─────────────────────────────────────────────────────────────────────────────
- *  Every social icon, card and footer link on the site reads from this list.
- *  To change a profile URL, change it here — nowhere else.
+ *  REPLACE — every profile below uses the demo handle "thetobyace". Change the
+ *  `url` (and `handle`) of each platform to your real profile. Setting a `url`
+ *  to null hides the link and shows that card as "coming soon".
  *
- *  `verified: false` marks a PLACEHOLDER handle that has not been confirmed.
- *  Set it to `true` once the URL is correct. Unverified links still work, they
- *  just point to the assumed handle "thetobyace" on each platform.
+ *  Telegram: set `telegramUsername` (without "@") — the "Connect on Telegram"
+ *  button opens a direct conversation at https://t.me/<username>.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import { contact } from "./site";
 
-export type SocialPlatform =
-  | "x"
-  | "instagram"
-  | "tiktok"
-  | "youtube"
-  | "telegram"
-  | "linkedin"
-  | "email";
+export type SocialPlatform = "telegram" | "youtube" | "instagram" | "x" | "tiktok" | "linkedin" | "email";
 
 export type SocialLink = {
   platform: SocialPlatform;
   label: string;
-  handle: string;
-  href: string;
-  /** What people will find there — shown on the contact page and social cards. */
   description: string;
-  verified: boolean;
+  /** Full profile URL. `null` = not supplied yet (PLACEHOLDER). */
+  url: string | null;
+  /** Visible handle, e.g. "@thetobyace". Optional. */
+  handle?: string;
 };
+
+/** REPLACE — your Telegram username without "@". */
+export const telegramUsername = "thetobyace";
 
 export const socials: SocialLink[] = [
   {
+    platform: "telegram",
+    label: "Telegram",
+    description: "The most direct way to reach me — questions, enquiries and updates.",
+    url: telegramUsername ? `https://t.me/${telegramUsername}` : null,
+    handle: telegramUsername ? `@${telegramUsername}` : undefined,
+  },
+  {
     platform: "youtube",
     label: "YouTube",
+    description: "Educational videos on structure, liquidity, execution and psychology.",
+    url: "https://www.youtube.com/@thetobyace", // REPLACE
     handle: "@thetobyace",
-    href: "https://www.youtube.com/@thetobyace", // PLACEHOLDER
-    description: "Trade breakdowns, market analysis and long-form lessons.",
-    verified: false,
   },
   {
     platform: "x",
     label: "X",
+    description: "Market observations and chart notes as price develops.",
+    url: "https://x.com/thetobyace", // REPLACE
     handle: "@thetobyace",
-    href: "https://x.com/thetobyace", // PLACEHOLDER
-    description: "Market thoughts, charts and short commentary.",
-    verified: false,
   },
   {
     platform: "instagram",
     label: "Instagram",
+    description: "Short-form education and behind-the-charts content.",
+    url: "https://www.instagram.com/thetobyace", // REPLACE
     handle: "@thetobyace",
-    href: "https://www.instagram.com/thetobyace", // PLACEHOLDER
-    description: "Behind the scenes, lifestyle and short-form education.",
-    verified: false,
   },
   {
     platform: "tiktok",
     label: "TikTok",
+    description: "Concise breakdowns of individual trading concepts.",
+    url: "https://www.tiktok.com/@thetobyace", // REPLACE
     handle: "@thetobyace",
-    href: "https://www.tiktok.com/@thetobyace", // PLACEHOLDER
-    description: "Short-form trading concepts and clips.",
-    verified: false,
-  },
-  {
-    platform: "telegram",
-    label: "Telegram",
-    handle: "@thetobyace",
-    href: "https://t.me/thetobyace", // PLACEHOLDER
-    description: "Direct line for mentorship enquiries and community updates.",
-    verified: false,
   },
   {
     platform: "linkedin",
     label: "LinkedIn",
+    description: "Professional profile, collaborations and partnerships.",
+    url: "https://www.linkedin.com/in/thetobyace", // REPLACE
     handle: "thetobyace",
-    href: "https://www.linkedin.com/in/thetobyace", // PLACEHOLDER
-    description: "Professional profile, business and partnerships.",
-    verified: false,
   },
   {
     platform: "email",
     label: "Email",
+    description: "Collaborations, partnerships and general enquiries.",
+    url: `mailto:${contact.email}`,
     handle: contact.email,
-    href: `mailto:${contact.email}`,
-    description: "Business, collaboration and press enquiries.",
-    verified: false,
   },
 ];
 
@@ -97,5 +86,9 @@ export function getSocial(platform: SocialPlatform): SocialLink {
   return link;
 }
 
-/** Profiles only (no email) — used for structured data `sameAs`. */
-export const socialProfiles = socials.filter((s) => s.platform !== "email");
+/** Profiles with a confirmed URL, excluding email — used for JSON-LD `sameAs`. */
+export const liveProfiles = socials.filter((s) => s.platform !== "email" && s.url);
+
+export function mailto(subject?: string): string {
+  return subject ? `mailto:${contact.email}?subject=${encodeURIComponent(subject)}` : `mailto:${contact.email}`;
+}

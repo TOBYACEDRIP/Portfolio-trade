@@ -1,78 +1,63 @@
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { SmartLink } from "./SmartLink";
+import { TiltCard } from "./TiltCard";
 
 type Props = {
   children: ReactNode;
   className?: string;
-  /**
-   * When set, the whole card is a single link. Leave empty for cards that
-   * contain their own links (nested links are invalid HTML).
-   */
+  /** Whole card becomes one link. Omit for cards containing their own links. */
   href?: string;
-  /** Accessible name for a linked card when the visible text isn't enough. */
   ariaLabel?: string;
-  /** Small mono label in the top-left corner. */
   label?: string;
-  /** Visual tone. "feature" adds a soft gold glow for emphasis. */
-  tone?: "default" | "feature" | "plain";
+  tone?: "white" | "ice" | "navy";
+  tilt?: boolean;
   padded?: boolean;
 };
 
-/**
- * The core Bento tile. Server component — hover/focus states are pure CSS so no
- * JavaScript ships for the grid itself.
- */
-export function BentoCard({
-  children,
-  className = "",
-  href,
-  ariaLabel,
-  label,
-  tone = "default",
-  padded = true,
-}: Props) {
-  const interactive = Boolean(href);
+const tones = {
+  white: "surface",
+  ice: "panel-ice",
+  navy: "panel-navy",
+};
 
+/** Bento tile: white, ice or navy surface, optional tilt, CSS hover states. */
+export function BentoCard({ children, className = "", href, ariaLabel, label, tone = "white", tilt = true, padded = true }: Props) {
+  const invert = tone === "navy";
   const body = (
     <>
-      {tone === "feature" && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gold/[0.07] blur-3xl transition-opacity duration-500 group-hover:opacity-100"
-        />
-      )}
-      {(label || interactive) && (
-        <div
-          className={`z-10 flex items-start justify-between gap-4 ${padded ? "relative mb-5" : "absolute inset-x-0 top-0 p-5 sm:p-6"}`}
-        >
-          {label ? <p className="eyebrow">{label}</p> : <span />}
-          {interactive && (
+      {(label || href) && (
+        <div className="relative z-10 mb-6 flex items-start justify-between gap-4">
+          {label ? <p className={`eyebrow ${invert ? "text-sky!" : ""}`}>{label}</p> : <span />}
+          {href && (
             <span
               aria-hidden="true"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-muted transition-all duration-300 group-hover:border-gold/50 group-hover:text-gold group-hover:rotate-45"
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 group-hover:rotate-45 ${
+                invert
+                  ? "border-white/20 text-white group-hover:bg-sky group-hover:text-navy"
+                  : "border-line-strong text-navy group-hover:border-navy group-hover:bg-navy group-hover:text-white"
+              }`}
             >
-              <ArrowUpRight size={15} strokeWidth={1.75} />
+              <ArrowUpRight size={16} strokeWidth={2} />
             </span>
           )}
         </div>
       )}
-      <div className="relative z-10 flex h-full flex-1 flex-col">{children}</div>
+      <div className="relative z-10 flex flex-1 flex-col">{children}</div>
     </>
   );
 
-  const classes = `surface group flex h-full flex-col overflow-hidden ${padded ? "p-6 sm:p-7" : ""} transition-[border-color,background-color,transform] duration-500 ease-out ${
-    interactive
-      ? "hover:border-line-strong hover:bg-card-hover motion-safe:hover:-translate-y-0.5 focus-visible:border-gold/60"
-      : ""
+  const classes = `${tones[tone]} group flex h-full flex-col overflow-hidden ${padded ? "p-6 sm:p-8" : ""} transition-[box-shadow,border-color] duration-500 ${
+    href ? "hover:shadow-[var(--shadow-lift)] hover:border-sky-deep/20" : ""
   } ${className}`;
 
-  if (href) {
-    return (
-      <SmartLink href={href} aria-label={ariaLabel} className={classes}>
-        {body}
-      </SmartLink>
-    );
-  }
-  return <div className={classes}>{body}</div>;
+  const card = href ? (
+    <SmartLink href={href} aria-label={ariaLabel} className={classes}>
+      {body}
+    </SmartLink>
+  ) : (
+    <div className={classes}>{body}</div>
+  );
+
+  return tilt ? <TiltCard className="h-full">{card}</TiltCard> : card;
 }
