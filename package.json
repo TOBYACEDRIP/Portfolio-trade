@@ -1,29 +1,28 @@
 {
-  "name": "vighnesh-portfolio",
-  "version": "0.1.0",
+  "name": "thetobyace",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "placeholders": "grep -rn --color=always -E 'PLACEHOLDER|verified: false' src/config src/content || echo 'No placeholders left.'"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^16.2.3",
-    "@next/mdx": "^16.2.2",
-    "@next/third-parties": "^16.2.4",
-    "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "cobe": "^0.6.5",
     "framer-motion": "^12.26.1",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.562.0",
     "next": "^16.2.4",
     "next-mdx-remote": "^6.0.0",
-    "next-themes": "^0.4.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "remark-gfm": "^4.0.1",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
