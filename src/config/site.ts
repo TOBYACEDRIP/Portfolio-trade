@@ -62,7 +62,7 @@ export const navigation: NavItem[] = [
 
 /** Secondary links shown in the footer only. */
 export const secondaryNavigation: NavItem[] = [
-  { label: "The Liquidity Room", href: "/mentorship", description: "Structured trading education." },
+  { label: "Mentorship", href: "/mentorship", description: "The Liquidity Room and private one-to-one mentorship." },
 ];
 
 export const contact = {
