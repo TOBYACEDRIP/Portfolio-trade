@@ -23,20 +23,23 @@ npm run dev        # http://localhost:3000
 
 ---
 
-## Before launch: supply the real information
+## Before launch: replace the demo content
 
-Nothing is invented: no usernames, links, statistics, dates, results or testimonials. Wherever real information is missing there is a marked `PLACEHOLDER`, and the site shows an honest "coming soon" state rather than a guess.
+The site ships with **demo content you can swap in VS Code**. Everything to change is marked `REPLACE` or `PLACEHOLDER`. Run `npm run placeholders` to list every spot.
 
-| What | Where | Until supplied |
+| What | Where | How to replace |
 | --- | --- | --- |
-| Telegram username | `src/config/socials.ts` → `telegramUsername` | Telegram CTA shows "coming soon"; email is offered instead |
-| YouTube, X, Instagram, TikTok, LinkedIn URLs | `src/config/socials.ts` → `url` | Cards show "coming soon" and aren't clickable |
-| Professional portrait | `src/config/site.ts` → `person.portrait` | Labelled "Portrait · coming soon" placeholder |
-| Trading Library videos | `src/config/library.ts` → `videos` | Each category shows its topic outline |
-| Chart breakdowns | `src/content/insights/*.mdx` (see below) | Insights shows the three concept articles |
-| Confirmed milestones (optional) | `src/config/experience.ts` → `milestones` | Timeline section is hidden |
-| X handle for social cards (optional) | `src/config/site.ts` → `seoDefaults.twitterHandle` | Omitted from metadata |
-| Mentorship intake status (optional) | `src/config/mentorship.ts` → `status` | Badge hidden |
+| Portrait photo | `public/images/portrait.jpg` | Overwrite the file with your photo, keeping the same name (portrait orientation, ~1200×1500) |
+| Telegram username | `src/config/socials.ts` → `telegramUsername` | Demo: `thetobyace` |
+| YouTube, X, Instagram, TikTok, LinkedIn | `src/config/socials.ts` → each `url` and `handle` | Demo: `thetobyace` on each platform |
+| Trading Library lessons | `src/config/library.ts` → `videos` | Change each `url` to the real video link (they currently open the channel) |
+| Lesson thumbnails | `public/images/library/*.jpg` | Overwrite with your own 1280×720 images, or use `youtubeId` for YouTube's thumbnail |
+| X handle for share cards | `src/config/site.ts` → `seoDefaults.twitterHandle` | Demo: `@thetobyace` |
+| Chart breakdowns | `src/content/insights/*.mdx` | Add your own (see below) |
+| Milestones (optional) | `src/config/experience.ts` → `milestones` | The timeline section is hidden until you add some |
+| Mentorship intake status (optional) | `src/config/mentorship.ts` → `status` | The badge is hidden until set |
+
+Setting any social `url` to `null` hides that link and shows the card as "coming soon". Setting `portrait` to `null` shows the "TA" monogram instead of a photo.
 
 Email is live: **akinshola.toby16@gmail.com**.
 
@@ -59,9 +62,9 @@ src/config/
   insights.ts     Market Insights categories
 ```
 
-### Add a portrait
+### Replace the portrait
 
-Put the photo in `public/images/` (portrait orientation, 1200px+ tall), then set `portrait: "/images/your-photo.jpg"` in `src/config/site.ts`. It's used on the homepage, the Experience page and in structured data.
+Overwrite `public/images/portrait.jpg` with your photo (same filename). Or add a new file and point `portrait` in `src/config/site.ts` at it. It's used on the homepage, the Experience page and in structured data.
 
 ### Add a social profile or Telegram
 
@@ -71,18 +74,20 @@ export const telegramUsername = "yourusername";            // opens a direct cha
 { platform: "youtube", url: "https://www.youtube.com/@yourhandle", handle: "@yourhandle", ... }
 ```
 
-### Add a Trading Library video
+### Edit or add a Trading Library lesson
 
-Add one object to `videos` in `src/config/library.ts`:
+Each lesson is one object in `videos` in `src/config/library.ts`:
 
 ```ts
 {
-  youtubeId: "abc123XYZ",            // from youtube.com/watch?v=abc123XYZ
-  title: "Order Blocks — what makes one valid",
+  title: "Order Blocks: what makes one valid",
   description: "What the lesson covers.",
-  category: "points-of-interest",    // market-structure | liquidity | points-of-interest | execution | fundamentals | psychology | risk
-  duration: "8:42",                  // optional
-  featured: true,                    // optional — shown first and on the homepage
+  category: "points-of-interest",   // market-structure | liquidity | points-of-interest | execution | fundamentals | psychology | risk
+  url: "https://www.youtube.com/watch?v=abc123XYZ",
+  thumbnail: "/images/library/order-blocks.jpg",   // your own image, or…
+  // youtubeId: "abc123XYZ",                       // …use YouTube's thumbnail instead
+  duration: "8:42",                 // optional
+  featured: true,                   // optional: shown first and on the homepage
 }
 ```
 
