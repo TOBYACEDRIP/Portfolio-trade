@@ -41,10 +41,11 @@ export const person = {
   identity: ["Forex Trader", "Technical Analyst", "Market Structure", "Trading Psychology"],
   jobTitle: "Forex Trader & Technical Analyst",
   /**
-   * PLACEHOLDER — professional portrait, e.g. "/images/toby-portrait.jpg"
-   * (put the file in /public/images). Until set, a designed placeholder is shown.
+   * REPLACE — demo portrait. Swap the file at /public/images/portrait.jpg for your
+   * own photo (same filename, portrait orientation, ~1200×1500), or point this at
+   * a different file. Set to null to show the "TA" monogram instead.
    */
-  portrait: null as string | null,
+  portrait: "/images/portrait.jpg" as string | null,
   portraitAlt: "Portrait of TheTobyAce",
 } as const;
 
@@ -69,8 +70,8 @@ export const contact = {
 } as const;
 
 export const seoDefaults = {
-  /** PLACEHOLDER — X handle including "@", once confirmed. Leave "" to omit. */
-  twitterHandle: "",
+  /** REPLACE — your X handle including "@" (used in X/Twitter share cards). */
+  twitterHandle: "@thetobyace",
   /** Optional Google Search Console verification token. */
   googleVerification: "",
 } as const;

@@ -55,7 +55,7 @@ export function LibraryBrowser({ youtubeUrl }: { youtubeUrl: string | null }) {
               {items.length > 0 ? (
                 <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {items.map((v, i) => (
-                    <Reveal as="li" key={v.youtubeId} delay={0.04 * (i % 3)}>
+                    <Reveal as="li" key={v.title} delay={0.04 * (i % 3)}>
                       <VideoCard video={v} />
                     </Reveal>
                   ))}

@@ -203,7 +203,7 @@ export default function HomePage() {
           {featuredVideos.length > 0 ? (
             <ul className="mb-4 grid gap-4 md:grid-cols-3">
               {featuredVideos.map((v) => (
-                <li key={v.youtubeId}>
+                <li key={v.title}>
                   <VideoCard video={v} />
                 </li>
               ))}

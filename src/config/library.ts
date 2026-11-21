@@ -2,21 +2,21 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *  TRADING LIBRARY — curated YouTube lessons
  * ─────────────────────────────────────────────────────────────────────────────
- *  To add a video, add ONE object to `videos` below. Nothing else to edit.
+ *  Each lesson is ONE object in `videos` below. To edit a lesson:
  *
- *  {
- *    youtubeId: "abc123XYZ",          // from youtube.com/watch?v=abc123XYZ
- *    title: "Order Blocks — what makes one valid",
- *    description: "Short summary of what the video covers.",
- *    category: "points-of-interest",  // an id from libraryCategories
- *    duration: "8:42",                // optional
- *    featured: true,                  // optional — shown first and on the homepage
- *  }
+ *    url        — REPLACE with the YouTube video link (currently your channel)
+ *    thumbnail  — REPLACE the image file in /public/images/library/ (1280×720),
+ *                 or delete this line and add `youtubeId` to use YouTube's own thumbnail
+ *    title / description / duration — edit freely
  *
- *  PLACEHOLDER — no videos have been supplied yet, so each category currently
- *  shows its topic outline with a "videos coming soon" note.
+ *  To add more lessons, copy any entry and change it. Either form works:
+ *
+ *    { url: "https://www.youtube.com/watch?v=abc123", youtubeId: "abc123", ... }
+ *    { url: "https://www.youtube.com/watch?v=abc123", thumbnail: "/images/library/my-image.jpg", ... }
  * ─────────────────────────────────────────────────────────────────────────────
  */
+
+import { getSocial } from "./socials";
 
 export const libraryCategories = [
   {
@@ -66,16 +66,75 @@ export const libraryCategories = [
 export type LibraryCategoryId = (typeof libraryCategories)[number]["id"];
 
 export type LibraryVideo = {
-  youtubeId: string;
   title: string;
   description: string;
   category: LibraryCategoryId;
+  /** Where the card links to — a YouTube video (or channel) URL. */
+  url: string;
+  /** Image in /public, e.g. "/images/library/liquidity.jpg". */
+  thumbnail?: string;
+  /** YouTube video ID — used for the thumbnail when `thumbnail` isn't set. */
+  youtubeId?: string;
   duration?: string;
   featured?: boolean;
 };
 
+/** REPLACE — demo lessons link to the YouTube channel until real video links are added. */
+const channel = getSocial("youtube").url ?? "https://www.youtube.com";
+
 export const videos: LibraryVideo[] = [
-  // Add real videos here — see the example at the top of this file.
+  {
+    title: "Understanding Market Structure",
+    description: "Swing highs and lows, breaks of structure and how to tell a real shift from noise.",
+    category: "market-structure",
+    url: channel, // REPLACE with the video link
+    thumbnail: "/images/library/market-structure.jpg", // REPLACE the image file
+    featured: true,
+  },
+  {
+    title: "Liquidity Explained",
+    description: "Buy-side and sell-side liquidity, sweeps, inducement and the draw on liquidity.",
+    category: "liquidity",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/liquidity.jpg", // REPLACE
+    featured: true,
+  },
+  {
+    title: "Selecting Points of Interest",
+    description: "Order blocks, fair value gaps and breakers — and how to grade them by context.",
+    category: "points-of-interest",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/points-of-interest.jpg", // REPLACE
+    featured: true,
+  },
+  {
+    title: "The Entry Model, Step by Step",
+    description: "From liquidity sweep to market structure shift, displacement and a refined entry.",
+    category: "execution",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/execution.jpg", // REPLACE
+  },
+  {
+    title: "Fundamentals for Technical Traders",
+    description: "Interest rates, central banks and economic releases as context for the technical model.",
+    category: "fundamentals",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/fundamentals.jpg", // REPLACE
+  },
+  {
+    title: "Trading Psychology Essentials",
+    description: "Thinking in probabilities, accepting risk and avoiding overtrading.",
+    category: "psychology",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/psychology.jpg", // REPLACE
+  },
+  {
+    title: "Risk Management Basics",
+    description: "Position sizing, risk-to-reward and protecting capital through drawdowns.",
+    category: "risk",
+    url: channel, // REPLACE
+    thumbnail: "/images/library/risk.jpg", // REPLACE
+  },
 ];
 
 export function getCategory(id: LibraryCategoryId) {
@@ -83,4 +142,3 @@ export function getCategory(id: LibraryCategoryId) {
 }
 
 export const youtubeThumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-export const youtubeUrl = (id: string) => `https://www.youtube.com/watch?v=${id}`;

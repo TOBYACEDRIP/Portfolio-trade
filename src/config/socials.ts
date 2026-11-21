@@ -2,11 +2,12 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *  SOCIAL LINKS — single source of truth
  * ─────────────────────────────────────────────────────────────────────────────
- *  No usernames or URLs are invented. A platform with `url: null` is shown as
- *  "Link coming soon" (not clickable) until its real profile URL is added here.
+ *  REPLACE — every profile below uses the demo handle "thetobyace". Change the
+ *  `url` (and `handle`) of each platform to your real profile. Setting a `url`
+ *  to null hides the link and shows that card as "coming soon".
  *
- *  Telegram: set `telegramUsername` (without "@") — the CTA then opens a direct
- *  conversation at https://t.me/<username>.
+ *  Telegram: set `telegramUsername` (without "@") — the "Connect on Telegram"
+ *  button opens a direct conversation at https://t.me/<username>.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -24,8 +25,8 @@ export type SocialLink = {
   handle?: string;
 };
 
-/** PLACEHOLDER — your Telegram username without "@", e.g. "thetobyace". */
-export const telegramUsername = "";
+/** REPLACE — your Telegram username without "@". */
+export const telegramUsername = "thetobyace";
 
 export const socials: SocialLink[] = [
   {
@@ -39,31 +40,36 @@ export const socials: SocialLink[] = [
     platform: "youtube",
     label: "YouTube",
     description: "Educational videos on structure, liquidity, execution and psychology.",
-    url: null, // PLACEHOLDER — e.g. "https://www.youtube.com/@yourhandle"
+    url: "https://www.youtube.com/@thetobyace", // REPLACE
+    handle: "@thetobyace",
   },
   {
     platform: "x",
     label: "X",
     description: "Market observations and chart notes as price develops.",
-    url: null, // PLACEHOLDER
+    url: "https://x.com/thetobyace", // REPLACE
+    handle: "@thetobyace",
   },
   {
     platform: "instagram",
     label: "Instagram",
     description: "Short-form education and behind-the-charts content.",
-    url: null, // PLACEHOLDER
+    url: "https://www.instagram.com/thetobyace", // REPLACE
+    handle: "@thetobyace",
   },
   {
     platform: "tiktok",
     label: "TikTok",
     description: "Concise breakdowns of individual trading concepts.",
-    url: null, // PLACEHOLDER
+    url: "https://www.tiktok.com/@thetobyace", // REPLACE
+    handle: "@thetobyace",
   },
   {
     platform: "linkedin",
     label: "LinkedIn",
     description: "Professional profile, collaborations and partnerships.",
-    url: null, // PLACEHOLDER
+    url: "https://www.linkedin.com/in/thetobyace", // REPLACE
+    handle: "thetobyace",
   },
   {
     platform: "email",
