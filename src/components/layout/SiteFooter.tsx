@@ -1,34 +1,36 @@
 import Link from "next/link";
-import { contact, navigation, person, riskDisclaimer } from "@/config/site";
+import { contact, navigation, person, riskDisclaimer, secondaryNavigation } from "@/config/site";
 import { socials } from "@/config/socials";
 import { SocialIcon } from "@/components/icons/SocialIcon";
 import { Container } from "@/components/ui/primitives";
+import { Wordmark } from "./Wordmark";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const live = socials.filter((s) => s.url);
   return (
-    <footer className="border-t border-line bg-bg">
-      <Container className="py-16">
+    <footer className="relative overflow-hidden bg-navy text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute -top-40 right-0 h-80 w-[40rem] rounded-full bg-sky/15 blur-3xl" />
+      <Container className="relative py-16">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link href="/" className="font-display text-3xl tracking-tight text-fg">
-              TheToby<span className="italic text-gold">Ace</span>
+            <Link href="/" aria-label={`${person.brand} — home`}>
+              <Wordmark invert />
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">{person.intro}</p>
-            <a
-              href={`mailto:${contact.email}`}
-              className="mt-6 inline-block text-sm text-fg underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-gold"
-            >
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">
+              Forex trader and technical analyst. Market structure, liquidity, price delivery and the TOBYACE Model™.
+            </p>
+            <a href={`mailto:${contact.email}`} className="mt-6 inline-block break-all text-sm font-semibold text-sky underline decoration-sky/40 underline-offset-4 hover:decoration-sky">
               {contact.email}
             </a>
           </div>
 
           <nav aria-label="Footer">
-            <p className="eyebrow mb-5">Explore</p>
+            <p className="eyebrow mb-5 text-white/50!">Explore</p>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-              {navigation.map((item) => (
+              {[...navigation, ...secondaryNavigation].map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-muted transition-colors hover:text-fg">
+                  <Link href={item.href} className="text-white/75 transition-colors hover:text-white">
                     {item.label}
                   </Link>
                 </li>
@@ -37,31 +39,34 @@ export function SiteFooter() {
           </nav>
 
           <div>
-            <p className="eyebrow mb-5">Follow</p>
+            <p className="eyebrow mb-5 text-white/50!">Connect</p>
             <ul className="flex flex-wrap gap-2">
-              {socials.map((s) => (
+              {live.map((s) => (
                 <li key={s.platform}>
                   <a
-                    href={s.href}
-                    {...(s.platform !== "email" && { target: "_blank", rel: "noopener noreferrer" })}
+                    href={s.url!}
+                    {...(s.platform !== "email" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     aria-label={s.platform === "email" ? `Email ${s.handle}` : `${s.label} (opens in a new tab)`}
                     title={s.label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-muted transition-colors duration-300 hover:border-gold/50 hover:text-fg"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-sky hover:bg-sky hover:text-navy"
                   >
                     <SocialIcon platform={s.platform} size={16} />
                   </a>
                 </li>
               ))}
             </ul>
+            <Link href="/connect" className="mt-5 inline-block text-sm text-white/75 underline decoration-white/25 underline-offset-4 hover:text-white">
+              All platforms →
+            </Link>
           </div>
         </div>
 
-        <div className="mt-14 border-t border-line pt-8">
-          <p className="max-w-4xl text-xs leading-relaxed text-subtle">
-            <span className="font-medium text-muted">Risk disclaimer. </span>
+        <div className="mt-14 border-t border-white/10 pt-8">
+          <p className="max-w-4xl text-xs leading-relaxed text-white/55">
+            <span className="font-semibold text-white/75">Risk disclaimer. </span>
             {riskDisclaimer}
           </p>
-          <div className="mt-6 flex flex-col gap-2 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 flex flex-col gap-2 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {year} {person.brand}. All rights reserved.
             </p>

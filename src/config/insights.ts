@@ -1,17 +1,14 @@
 /**
- * Insight categories. An article's frontmatter `category` must match one of
- * these ids. Add a new category here and it appears in the filter automatically
- * (empty categories are hidden).
+ * Market Insights categories. An entry's frontmatter `category` must match one
+ * of these ids. Empty categories are hidden from the filter automatically.
  */
 export const insightCategories = [
-  { id: "forex", label: "Forex Trading" },
+  { id: "forex-analysis", label: "Forex Analysis" },
+  { id: "technical-analysis", label: "Technical Analysis" },
   { id: "market-structure", label: "Market Structure" },
-  { id: "liquidity", label: "Liquidity" },
+  { id: "liquidity", label: "Liquidity Analysis" },
+  { id: "fundamental-context", label: "Fundamental Context" },
   { id: "psychology", label: "Trading Psychology" },
-  { id: "prop-firms", label: "Prop Firms" },
-  { id: "entrepreneurship", label: "Entrepreneurship" },
-  { id: "personal-development", label: "Personal Development" },
-  { id: "technology", label: "Technology" },
 ] as const;
 
 export type InsightCategoryId = (typeof insightCategories)[number]["id"];

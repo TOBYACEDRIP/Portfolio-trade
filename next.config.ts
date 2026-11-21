@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    // YouTube thumbnails for featured videos (src/config/work.ts).
+    // YouTube thumbnails for Trading Library videos (src/config/library.ts).
     remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
   },
   async headers() {
@@ -22,7 +22,12 @@ const nextConfig: NextConfig = {
       // Legacy routes from the original template.
       { source: "/blog", destination: "/insights", permanent: true },
       { source: "/blog/:slug", destination: "/insights/:slug", permanent: true },
-      { source: "/projects", destination: "/work", permanent: true },
+      { source: "/projects", destination: "/library", permanent: true },
+      // Routes from the previous version of this site.
+      { source: "/method", destination: "/model", permanent: true },
+      { source: "/work", destination: "/library", permanent: true },
+      { source: "/about", destination: "/experience", permanent: true },
+      { source: "/contact", destination: "/connect", permanent: true },
       // Canonical host: www → apex.
       {
         source: "/:path*",

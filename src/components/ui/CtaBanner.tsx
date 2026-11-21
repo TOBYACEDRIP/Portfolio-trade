@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { ArrowRight } from "lucide-react";
 import { ButtonLink, Container } from "./primitives";
 import { Reveal } from "./Reveal";
+import { CandleField } from "@/components/charts/CandleField";
 
 type Action = { label: string; href: string };
 
@@ -19,29 +19,24 @@ export function CtaBanner({
   secondary?: Action;
 }) {
   return (
-    <section className="pb-24 sm:pb-32">
+    <section className="pb-20 sm:pb-28">
       <Container>
         <Reveal>
-          <div className="surface relative overflow-hidden px-6 py-14 sm:px-12 sm:py-20">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-gold/[0.08] blur-3xl"
-            />
-            <div className="grid-texture pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />
+          <div className="panel-navy relative overflow-hidden px-6 py-14 sm:px-14 sm:py-20">
+            <CandleField className="absolute -right-10 bottom-0 hidden h-[85%] w-[55%] opacity-50 md:block" />
             <div className="relative max-w-2xl">
-              <p className="eyebrow text-gold!">{eyebrow}</p>
-              <h2 className="mt-5 font-display text-4xl leading-[1.05] text-fg sm:text-5xl">{title}</h2>
-              {body && <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">{body}</p>}
+              <p className="eyebrow inline-flex items-center gap-2.5 text-sky!">
+                <span className="h-1.5 w-1.5 rounded-full bg-sky" aria-hidden="true" />
+                {eyebrow}
+              </p>
+              <h2 className="mt-5 text-3xl font-extrabold leading-[1.08] text-white sm:text-5xl">{title}</h2>
+              {body && <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-lg">{body}</p>}
               <div className="mt-9 flex flex-wrap gap-3">
-                <ButtonLink href={primary.href} icon={primary.href.startsWith("/") ? <ArrowRight size={16} aria-hidden="true" /> : undefined}>
+                <ButtonLink href={primary.href} variant="sky">
                   {primary.label}
                 </ButtonLink>
                 {secondary && (
-                  <ButtonLink
-                    href={secondary.href}
-                    variant="secondary"
-                    icon={secondary.href.startsWith("/") ? <ArrowRight size={16} aria-hidden="true" /> : undefined}
-                  >
+                  <ButtonLink href={secondary.href} variant="light">
                     {secondary.label}
                   </ButtonLink>
                 )}

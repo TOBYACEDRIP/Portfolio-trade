@@ -12,7 +12,16 @@ import { slugify } from "@/lib/format";
  * URL slug. Adding a new article = adding one file; nothing else to register.
  *
  * Required frontmatter: title, description, date (YYYY-MM-DD), category.
- * Optional: tags (string[]), updated (YYYY-MM-DD), draft (boolean), image.
+ * Optional: tags (string[]), updated (YYYY-MM-DD), draft (boolean).
+ *
+ * Market-analysis entries (type: "analysis") can also include:
+ *   instrument: "EURUSD"        timeframe: "H4"
+ *   bias: bullish | bearish | neutral
+ *   chart: "/images/insights/eurusd-h4.png"   chartAlt: "…"
+ *   poi: "H4 fair value gap at 1.0820–1.0835"
+ *   narrative:
+ *     where: "…"  happened: "…"  draw: "…"  confirmation: "…"  invalidation: "…"
+ * The narrative is rendered as a structured panel above the article body.
  */
 
 const INSIGHTS_DIR = path.join(process.cwd(), "src", "content", "insights");
@@ -26,9 +35,25 @@ export type InsightMeta = {
   updated?: string;
   category: InsightCategoryId;
   tags: string[];
-  image?: string;
+  /** "analysis" = chart breakdown, "note" = conceptual article. */
+  type: "analysis" | "note";
+  instrument?: string;
+  timeframe?: string;
+  bias?: "bullish" | "bearish" | "neutral";
+  chart?: string;
+  chartAlt?: string;
+  poi?: string;
+  narrative?: Narrative;
   readingTime: number;
   wordCount: number;
+};
+
+export type Narrative = {
+  where?: string;
+  happened?: string;
+  draw?: string;
+  confirmation?: string;
+  invalidation?: string;
 };
 
 export type Insight = InsightMeta & { content: string };
@@ -42,6 +67,8 @@ function countWords(markdown: string): number {
     .replace(/[#>*_`~\-[\]()!|]/g, " ");
   return text.split(/\s+/).filter(Boolean).length;
 }
+
+const str = (v: unknown) => (v === undefined || v === null || v === "" ? undefined : String(v));
 
 function parseFile(fileName: string): Insight | null {
   const slug = fileName.replace(/\.mdx$/, "");
@@ -72,7 +99,23 @@ function parseFile(fileName: string): Insight | null {
     updated: data.updated ? toISODate(data.updated) : undefined,
     category: data.category as InsightCategoryId,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-    image: data.image ? String(data.image) : undefined,
+    type: data.type === "analysis" ? "analysis" : "note",
+    instrument: str(data.instrument),
+    timeframe: str(data.timeframe),
+    bias: ["bullish", "bearish", "neutral"].includes(data.bias) ? data.bias : undefined,
+    chart: str(data.chart),
+    chartAlt: str(data.chartAlt),
+    poi: str(data.poi),
+    narrative:
+      data.narrative && typeof data.narrative === "object"
+        ? {
+            where: str(data.narrative.where),
+            happened: str(data.narrative.happened),
+            draw: str(data.narrative.draw),
+            confirmation: str(data.narrative.confirmation),
+            invalidation: str(data.narrative.invalidation),
+          }
+        : undefined,
     readingTime: Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE)),
     wordCount,
     content,

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "placeholders": "grep -rn --color=always -E 'PLACEHOLDER|verified: false' src/config src/content || echo 'No placeholders left.'"
+    "placeholders": "grep -rn --color=always -E 'PLACEHOLDER|url: null|Username = \"\"' src/config src/content || echo 'No placeholders left.'"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^16.2.3",

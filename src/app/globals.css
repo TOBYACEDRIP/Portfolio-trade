@@ -2,39 +2,67 @@
 
 /* ==========================================================================
    DESIGN TOKENS — TheTobyAce
-   Dark-first. Gold is an accent, never a fill colour for large surfaces.
+   Light, chart-inspired palette. Sky blue leads; soft orange is a sparing
+   accent for analytical markers; midnight navy carries text and contrast.
    ========================================================================== */
 @theme {
-  /* Surfaces */
-  --color-bg: #0b0b0b;
-  --color-surface: #151515;
-  --color-card: #1b1b1b;
-  --color-card-hover: #202020;
+  /* Palette (from the brief) */
+  --color-canvas: #f4f7fa; /* Cloud White — page background */
+  --color-surface: #ffffff; /* Pure White — cards */
+  --color-ice: #e5f3fc; /* Ice Blue — secondary backgrounds */
+  --color-sky: #70c8f5; /* Sky Blue — brand accent (decorative / fills) */
+  --color-peach: #ffdab8; /* Soft Orange — secondary accent */
+  --color-navy: #101d36; /* Midnight Navy — text & contrast */
 
-  /* Lines */
-  --color-line: rgb(255 255 255 / 0.07);
-  --color-line-strong: rgb(255 255 255 / 0.13);
-
-  /* Accent — muted champagne gold */
-  --color-gold: #c6a66b;
-  --color-gold-soft: #d9c39a;
-  --color-gold-deep: #8f7647;
-
-  /* Text */
-  --color-fg: #f5f5f5;
-  --color-muted: #a0a0a0;
-  --color-subtle: #8a8a8a;
+  /* Supporting shades (derived, for accessible text & depth) */
+  --color-sky-deep: #1c76b3; /* sky for text/links — 4.9:1 on white */
+  --color-sky-soft: #b9e3fa;
+  --color-peach-deep: #e7833c; /* orange markers (graphics only) */
+  --color-peach-ink: #a8541a; /* orange for text — 5.4:1 on white */
+  --color-navy-soft: #33435f; /* secondary text */
+  --color-muted: #55657f; /* tertiary text — 5.5:1 on canvas */
+  --color-line: rgb(16 29 54 / 0.08);
+  --color-line-strong: rgb(16 29 54 / 0.16);
 
   /* Type */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-serif), ui-serif, Georgia, serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, monospace;
 
-  /* Radii — rounded but restrained */
-  --radius-card: 1.25rem;
+  /* Radii */
+  --radius-card: 1.5rem;
 
-  /* Motion */
+  /* Shadows — cool, navy-tinted, never grey */
+  --shadow-soft: 0 1px 2px rgb(16 29 54 / 0.04), 0 8px 24px -12px rgb(16 29 54 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(16 29 54 / 0.04), 0 24px 48px -20px rgb(28 118 179 / 0.28);
+
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 10s ease-in-out infinite;
+  --animate-dash: dash 1.6s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes aurora {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(4%, -3%, 0) scale(1.08); }
+  100% { transform: translate3d(-3%, 4%, 0) scale(0.96); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -16; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
 
 /* ==========================================================================
@@ -42,7 +70,7 @@
    ========================================================================== */
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     scroll-behavior: smooth;
@@ -50,33 +78,33 @@
   }
 
   body {
-    background-color: var(--color-bg);
-    color: var(--color-fg);
+    background-color: var(--color-canvas);
+    color: var(--color-navy);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+
   ::selection {
-    background: rgb(198 166 107 / 0.28);
-    color: var(--color-fg);
+    background: rgb(112 200 245 / 0.35);
+    color: var(--color-navy);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-gold);
+    outline: 2px solid var(--color-sky-deep);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -88,50 +116,62 @@
    COMPONENT PRIMITIVES
    ========================================================================== */
 @layer components {
-  /* Small uppercase label used across the site */
   .eyebrow {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
     line-height: 1;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-muted);
   }
 
-  /* Card surface with a hairline top highlight + very soft gradient */
+  /* Elevated white card */
   .surface {
     position: relative;
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.025), transparent 40%),
-      var(--color-card);
+    background: var(--color-surface);
     border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Ice-blue panel */
+  .panel-ice {
+    position: relative;
+    background: linear-gradient(160deg, #eef8fe 0%, var(--color-ice) 100%);
+    border: 1px solid rgb(28 118 179 / 0.1);
     border-radius: var(--radius-card);
   }
 
-  .surface::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    border-radius: inherit;
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.08), transparent);
-    pointer-events: none;
+  /* Navy contrast panel, used sparingly */
+  .panel-navy {
+    position: relative;
+    background:
+      radial-gradient(ellipse at 85% 0%, rgb(112 200 245 / 0.22), transparent 55%),
+      radial-gradient(ellipse at 0% 100%, rgb(255 218 184 / 0.12), transparent 50%),
+      var(--color-navy);
+    color: #f4f7fa;
+    border-radius: var(--radius-card);
   }
 
-  .gold-rule {
-    height: 1px;
-    width: 2.5rem;
-    background: linear-gradient(90deg, var(--color-gold), transparent);
-  }
-
-  /* Faint grid texture used behind heroes */
-  .grid-texture {
+  /* Faint chart grid */
+  .chart-grid {
     background-image:
-      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse at top, black 20%, transparent 70%);
-    -webkit-mask-image: radial-gradient(ellipse at top, black 20%, transparent 70%);
+      linear-gradient(rgb(16 29 54 / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(16 29 54 / 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .chart-grid-fade {
+    mask-image: radial-gradient(ellipse at 50% 0%, black 25%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 25%, transparent 75%);
+  }
+
+  .text-gradient {
+    /* Stays ≥ 3:1 on the canvas across the whole gradient (large text). */
+    background: linear-gradient(100deg, #155e91 0%, var(--color-sky-deep) 50%, #2a8acb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }
 
@@ -140,17 +180,5 @@
    ========================================================================== */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.18);
-  border-radius: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
+  scrollbar-color: rgb(16 29 54 / 0.2) transparent;
 }

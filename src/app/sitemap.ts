@@ -1,21 +1,19 @@
 import type { MetadataRoute } from "next";
-import { navigation } from "@/config/site";
+import { navigation, secondaryNavigation } from "@/config/site";
 import { getInsightsMeta } from "@/lib/insights";
 import { absoluteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const insights = getInsightsMeta();
   const latest = insights[0]?.updated ?? insights[0]?.date;
+  const priority: Record<string, number> = { "/": 1, "/model": 0.9, "/insights": 0.9, "/library": 0.8 };
 
-  const pages: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
-    ...navigation.map((item) => ({
-      url: absoluteUrl(item.href),
-      changeFrequency: (item.href === "/insights" ? "weekly" : "monthly") as "weekly" | "monthly",
-      priority: item.href === "/insights" || item.href === "/method" ? 0.9 : 0.8,
-      ...(item.href === "/insights" && latest ? { lastModified: latest } : {}),
-    })),
-  ];
+  const pages: MetadataRoute.Sitemap = [...navigation, ...secondaryNavigation].map((item) => ({
+    url: absoluteUrl(item.href),
+    changeFrequency: item.href === "/insights" || item.href === "/library" ? "weekly" : "monthly",
+    priority: priority[item.href] ?? 0.7,
+    ...(item.href === "/insights" && latest ? { lastModified: latest } : {}),
+  }));
 
   const articles: MetadataRoute.Sitemap = insights.map((post) => ({
     url: absoluteUrl(`/insights/${post.slug}`),
