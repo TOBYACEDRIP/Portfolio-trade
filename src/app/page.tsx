@@ -1,161 +1,260 @@
-"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { contact, person, site } from "@/config/site";
+import { getSocial, socials } from "@/config/socials";
+import { featuredVideos } from "@/config/work";
+import { methodIntro } from "@/config/method";
+import { mentorship } from "@/config/mentorship";
+import { getCategoryLabel } from "@/config/insights";
+import { getInsightsMeta } from "@/lib/insights";
+import { formatDate } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo";
+import { BentoCard } from "@/components/ui/BentoCard";
+import { ButtonLink, Container } from "@/components/ui/primitives";
+import { Portrait, StructureGlyph } from "@/components/ui/Graphics";
+import { Reveal } from "@/components/ui/Reveal";
+import { SocialIcon } from "@/components/icons/SocialIcon";
 
-import { useState, useEffect, useCallback } from "react";
-import dynamic from "next/dynamic";
-import { BentoCard } from "../components/BentoCard";
-import { DetailView, DetailType } from "../components/DetailView";
-import { AnimatePresence, motion, Variants } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
-import {
-  IntroContent, SocialsContent, TechStackContent, AboutContent,
-  ExperienceContent, EducationContent, ProjectsTriggerContent,
-  TestimonialsContent, BlogContent, GitHubContent,
-} from "../components/CardContents";
-import { ConnectionHub } from "@/components/ConnectionHub";
-import { person } from "@/data/siteConfig";
-import { usePageLoading } from '@/components/PageLoadingContext';
-
-const MapContent = dynamic(
-  () => import("@/components/GlobeClient").then((m) => m.MapContent),
-  { ssr: false, loading: () => <div className="h-full w-full bg-card/20 animate-pulse" /> }
-);
-
-interface BentoItem {
-  id: string;
-  colSpan: string;
-  mobileOrder: number;
-  hasArrow?: boolean;
-  bgImage?: string;
-  noPadding?: boolean;
-  onClickModal?: DetailType;
-}
-
-const BENTO_ITEMS: BentoItem[] = [
-  { id: "intro",             colSpan: "col-span-2 lg:col-span-2", mobileOrder: 1 },
-  { id: "photo",             colSpan: "col-span-1 lg:col-span-1", mobileOrder: 2, bgImage: "/og-image.webp" },
-  { id: "socials",           colSpan: "col-span-1 lg:col-span-1", mobileOrder: 3 },
-  { id: "about",             colSpan: "col-span-1 lg:col-span-1", mobileOrder: 4,  hasArrow: true, onClickModal: "about" },
-  { id: "experience",        colSpan: "col-span-1 lg:col-span-1", mobileOrder: 5,  hasArrow: true, onClickModal: "experience" },
-  { id: "education",         colSpan: "col-span-1 lg:col-span-1", mobileOrder: 7,  hasArrow: true, onClickModal: "education" },
-  { id: "featured projects", colSpan: "col-span-1 lg:col-span-1", mobileOrder: 8,  hasArrow: true },
-  { id: "stack",             colSpan: "col-span-2 lg:col-span-2", mobileOrder: 6,  hasArrow: true, onClickModal: "stack" },
-  { id: "blog",              colSpan: "col-span-1 lg:col-span-1", mobileOrder: 9,  hasArrow: true},
-  { id: "testimonials",      colSpan: "col-span-1 lg:col-span-1", mobileOrder: 10, hasArrow: true, onClickModal: "testimonials" },
-  { id: "github",            colSpan: "col-span-2 lg:col-span-2", mobileOrder: 11 },
-  { id: "map",               colSpan: "col-span-2 lg:col-span-1", mobileOrder: 12, noPadding: true },
-];
-
-const NO_TITLE_CARDS = new Set(["intro", "socials", "photo", "map", "github", "testimonials"]);
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.03, delayChildren: 0 } },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
-};
+export const metadata = pageMetadata({ description: site.description, path: "/" });
 
 export default function HomePage() {
-  const [activeModal, setActiveModal] = useState<DetailType | null>(null);
-  const [isConnectOpen, setIsConnectOpen] = useState(false);
-  const { resolvedTheme } = useTheme();
-  const router = useRouter();
-  const { start } = usePageLoading();
-
-  // CRITICAL — hide initial loader as soon as React mounts
-  useEffect(() => {
-    const loader = document.getElementById("initial-loader");
-    if (loader) loader.classList.add("loaded");
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = activeModal || isConnectOpen ? "hidden" : "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [activeModal, isConnectOpen]);
-
-  const handleCardClick = useCallback((item: BentoItem) => {
-    if (item.onClickModal) return () => setActiveModal(item.onClickModal!);
-    if (item.id === "featured projects") return () => { start(); router.push("/projects"); };
-    if (item.id === "blog") return () => { start(); router.push("/blog"); };
-    return undefined;
-  }, [router, start]);
-
-  const renderCardContent = useCallback((id: string) => {
-    switch (id) {
-      case "intro":             return <IntroContent />;
-      case "socials":           return <SocialsContent onOpenConnect={() => setIsConnectOpen(true)} />;
-      case "stack":             return <TechStackContent />;
-      case "about":             return <AboutContent />;
-      case "experience":        return <ExperienceContent />;
-      case "education":         return <EducationContent />;
-      case "featured projects": return <ProjectsTriggerContent />;
-      case "testimonials":      return <TestimonialsContent />;
-      case "blog":              return <BlogContent />;
-      case "github":            return <GitHubContent />;
-      case "map":               return <MapContent theme={resolvedTheme} />;
-      default:                  return null;
-    }
-  }, [resolvedTheme]);
+  const latest = getInsightsMeta().slice(0, 2);
+  const youtube = getSocial("youtube");
+  const video = featuredVideos[0];
+  const profiles = socials.filter((s) => s.platform !== "email");
 
   return (
-    <main className="min-h-screen bg-page">
-      <div className="flex flex-col p-3 sm:p-4 md:p-4 md:pt-7 pt-6 sm:pt-8 pb-8">
-        <AnimatePresence>
-          {activeModal && (
-            <DetailView onClose={() => setActiveModal(null)} type={activeModal} />
-          )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {isConnectOpen && (
-            <ConnectionHub layoutId="connect-hub" onClose={() => setIsConnectOpen(false)} />
-          )}
-        </AnimatePresence>
+    <div className="relative overflow-hidden">
+      <div className="grid-texture pointer-events-none absolute inset-x-0 top-0 h-[40rem]" aria-hidden="true" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-48 left-1/4 h-[30rem] w-[50rem] rounded-full bg-gold/[0.05] blur-3xl"
+      />
 
-        <div className="w-full max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5 md:gap-4"
-            style={{ gridAutoRows: 'var(--grid-row-height)' }}
-          >
-            {BENTO_ITEMS.map((item) => (
-              <motion.div
-                key={item.id}
-                variants={itemVariants}
-                className={`${item.colSpan} lg:order-0`}
-                style={{ order: item.mobileOrder }}
-                layout
-              >
-                <BentoCard
-                  layoutId={item.id}
-                  dataId={item.id}
-                  className="h-full w-full"
-                  title={NO_TITLE_CARDS.has(item.id) ? undefined : item.id}
-                  backgroundImage={item.bgImage}
-                  hasArrow={item.hasArrow}
-                  isVisible={activeModal !== item.id}
-                  noPadding={item.noPadding}
-                  onClick={handleCardClick(item)}
-                >
-                  {renderCardContent(item.id)}
-                </BentoCard>
-              </motion.div>
-            ))}
-          </motion.div>
+      <Container className="relative pt-24 pb-24 sm:pt-28">
+        <h2 className="sr-only">Overview</h2>
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-6 lg:auto-rows-[minmax(13.5rem,auto)]">
+          {/* ── HERO ───────────────────────────────────────────── */}
+          <Reveal className="md:col-span-2 lg:col-span-4 lg:row-span-2">
+            <BentoCard tone="feature" className="min-h-[26rem] justify-between" padded>
+              <StructureGlyph
+                variant="displacement"
+                className="pointer-events-none absolute -right-2 top-14 hidden h-auto w-[36%] text-fg opacity-35 lg:block"
+              />
+              <div className="flex flex-1 flex-col justify-between gap-10">
+                <div className="flex items-center gap-3">
+                  <span className="gold-rule" aria-hidden="true" />
+                  <p className="eyebrow text-gold!">{person.tagline}</p>
+                </div>
+                <div>
+                  <h1 className="font-display text-[3.5rem] leading-[0.92] tracking-tight text-fg sm:text-7xl lg:text-[6.25rem]">
+                    TheToby<span className="italic text-gold">Ace</span>
+                  </h1>
+                  <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl">
+                    <span className="text-fg">I&apos;m {person.name}.</span> {person.intro}
+                  </p>
+                  <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2" aria-label="What I do">
+                    {person.roles.map((role) => (
+                      <li key={role} className="flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted">
+                        <span className="h-1 w-1 rounded-full bg-gold" aria-hidden="true" />
+                        {role}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-9 flex flex-wrap gap-3">
+                    <ButtonLink href="/method" icon={<ArrowRight size={16} aria-hidden="true" />}>
+                      Explore the Method
+                    </ButtonLink>
+                    <ButtonLink href="/about" variant="secondary" icon={<ArrowRight size={16} aria-hidden="true" />}>
+                      About me
+                    </ButtonLink>
+                  </div>
+                </div>
+              </div>
+            </BentoCard>
+          </Reveal>
 
-          <footer className="mt-5 flex flex-row justify-between items-center text-muted text-[0.65rem] font-medium uppercase tracking-wider opacity-40">
-            <p>© {person.year} {person.name}</p>
-            <div className="flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              <p>{person.role}</p>
-            </div>
-          </footer>
+          {/* ── PORTRAIT ───────────────────────────────────────── */}
+          <Reveal delay={0.05} className="md:col-span-1 lg:col-span-2 lg:row-span-2">
+            <BentoCard href="/about" padded={false} ariaLabel={`About ${person.name}`} className="min-h-[26rem]">
+              <Portrait priority sizes="(min-width: 1024px) 30vw, (min-width: 768px) 50vw, 100vw" />
+              <div className="relative mt-auto px-9 pb-9">
+                <p className="font-display text-2xl text-fg">{person.name}</p>
+                <p className="eyebrow mt-2">{person.brand}{person.location && ` · ${person.location}`}</p>
+              </div>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── ABOUT ──────────────────────────────────────────── */}
+          <Reveal delay={0.05} className="md:col-span-1 lg:col-span-2">
+            <BentoCard href="/about" label="About" ariaLabel="About — read the full story">
+              <p className="mt-auto font-display text-[1.75rem] leading-[1.1] text-fg">
+                Engineer by training. <span className="italic text-muted">Trader by discipline.</span>
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                From {person.education} to the Forex markets — the story behind the work.
+              </p>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── PHILOSOPHY ─────────────────────────────────────── */}
+          <Reveal delay={0.1} className="md:col-span-1 lg:col-span-2">
+            <BentoCard href="/method#principles" label="Trading philosophy" ariaLabel="Trading philosophy">
+              <p className="mt-auto font-display text-[1.75rem] leading-[1.1] text-fg">
+                Process over <span className="italic text-gold">prediction.</span>
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                Defined risk, patience, and no trade without a reason.
+              </p>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── METHOD ─────────────────────────────────────────── */}
+          <Reveal delay={0.15} className="md:col-span-2 lg:col-span-2 lg:row-span-2">
+            <BentoCard href="/method" label="Framework" tone="feature" ariaLabel={`${methodIntro.name} — read the framework`}>
+              <h3 className="font-display text-4xl leading-none text-fg">
+                The TOBYACE <span className="italic text-gold">Method™</span>
+              </h3>
+              <StructureGlyph className="my-8 h-auto w-full text-fg" />
+              <ol className="mt-auto space-y-0 divide-y divide-line border-t border-line">
+                {methodIntro.formula.map((step, i) => (
+                  <li key={step} className="flex items-baseline gap-4 py-3">
+                    <span className="font-mono text-[0.6875rem] text-gold">0{i + 1}</span>
+                    <span className="text-sm text-fg">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── FEATURED CONTENT ───────────────────────────────── */}
+          <Reveal className="md:col-span-2 lg:col-span-4">
+            <BentoCard label="Featured trading content">
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {latest.map((post) => (
+                  <li key={post.slug}>
+                    <Link
+                      href={`/insights/${post.slug}`}
+                      className="group/item flex h-full flex-col rounded-xl border border-line bg-bg/40 p-5 transition-colors duration-300 hover:border-line-strong hover:bg-bg/70"
+                    >
+                      <p className="eyebrow text-gold!">{getCategoryLabel(post.category)}</p>
+                      <p className="mt-3 font-display text-xl leading-snug text-fg">{post.title}</p>
+                      <p className="mt-auto pt-4 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-subtle">
+                        <time dateTime={post.date}>{formatDate(post.date, "short")}</time> · {post.readingTime} min read
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                <Link href="/insights" className="inline-flex items-center gap-1.5 text-fg transition-colors hover:text-gold-soft">
+                  All insights <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+                <Link href="/work" className="inline-flex items-center gap-1.5 text-muted transition-colors hover:text-fg">
+                  Selected work <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── YOUTUBE ────────────────────────────────────────── */}
+          <Reveal delay={0.05} className="md:col-span-1 lg:col-span-2">
+            <BentoCard
+              href={video ? `https://www.youtube.com/watch?v=${video.youtubeId}` : youtube.href}
+              label="YouTube"
+              ariaLabel={video ? `Watch on YouTube: ${video.title}` : `YouTube channel ${youtube.handle}`}
+            >
+              {video ? (
+                <div className="relative mb-4 aspect-video overflow-hidden rounded-lg border border-line">
+                  <Image
+                    src={`https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 30vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <SocialIcon platform="youtube" size={34} className="mb-6 text-fg/80 transition-colors duration-300 group-hover:text-[#FF0033]" />
+              )}
+              <p className="mt-auto font-display text-2xl leading-tight text-fg">
+                {video ? video.title : "Trade breakdowns & lessons"}
+              </p>
+              <p className="mt-2 text-sm text-muted">{video ? "Watch the latest video" : youtube.handle}</p>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── MENTORSHIP ─────────────────────────────────────── */}
+          <Reveal className="md:col-span-1 lg:col-span-4">
+            <BentoCard href="/mentorship" label="Mentorship" tone="feature" ariaLabel={`${mentorship.name} — mentorship`}>
+              <div className="mt-auto grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+                <div>
+                  <h3 className="font-display text-4xl leading-none text-fg sm:text-5xl">
+                    The Liquidity <span className="italic text-gold">Room</span>
+                  </h3>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-muted sm:text-base">{mentorship.lede}</p>
+                </div>
+                <ul className="space-y-2 text-sm text-muted lg:justify-self-end">
+                  {["Structured curriculum", "Live market application", "Risk-first teaching", "No signals. No promises."].map((x) => (
+                    <li key={x} className="flex items-center gap-3">
+                      <span className="h-px w-4 bg-gold/70" aria-hidden="true" />
+                      {x}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── SOCIALS ────────────────────────────────────────── */}
+          <Reveal delay={0.05} className="md:col-span-1 lg:col-span-2">
+            <BentoCard label="Connect">
+              <p className="font-display text-2xl leading-tight text-fg">Follow the work</p>
+              <ul className="mt-auto grid grid-cols-3 gap-2 pt-6" aria-label="Social profiles">
+                {profiles.map((s) => (
+                  <li key={s.platform}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${s.label} (opens in a new tab)`}
+                      title={s.label}
+                      className="flex h-14 items-center justify-center rounded-xl border border-line bg-bg/40 text-muted transition-colors duration-300 hover:border-gold/40 hover:bg-bg/80 hover:text-fg"
+                    >
+                      <SocialIcon platform={s.platform} size={19} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── ENTREPRENEURSHIP & TECH ────────────────────────── */}
+          <Reveal delay={0.1} className="md:col-span-1 lg:col-span-2">
+            <BentoCard href="/about#entrepreneurship" label="Entrepreneurship & technology" ariaLabel="Entrepreneurship and technology">
+              <p className="mt-auto font-display text-2xl leading-tight text-fg">
+                Building beyond <span className="italic text-muted">the charts.</span>
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                Businesses, media and software — built with the same discipline as a trading plan.
+              </p>
+            </BentoCard>
+          </Reveal>
+
+          {/* ── CONTACT ────────────────────────────────────────── */}
+          <Reveal delay={0.15} className="md:col-span-2 lg:col-span-2">
+            <BentoCard href="/contact" label="Contact" ariaLabel="Contact — business, collaboration and mentorship enquiries">
+              <p className="mt-auto font-display text-2xl leading-tight text-fg">Let&apos;s talk.</p>
+              <p className="mt-3 text-sm text-muted">Business, collaboration or mentorship.</p>
+              <p className="mt-4 inline-flex items-center gap-1.5 break-all text-sm text-fg">
+                {contact.email}
+                <ArrowUpRight size={14} aria-hidden="true" className="shrink-0 text-gold" />
+              </p>
+            </BentoCard>
+          </Reveal>
         </div>
-      </div>
-    </main>
+      </Container>
+    </div>
   );
 }

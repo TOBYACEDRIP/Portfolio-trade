@@ -1,149 +1,88 @@
 import "./globals.css";
-import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import type { Metadata, Viewport } from "next";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import Script from "next/script";
-import { PageLoadingProvider } from "@/components/PageLoadingContext";
-import { seo, person } from "@/data/siteConfig";
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { person, seoDefaults, site } from "@/config/site";
+import { jsonLdScript, personJsonLd, websiteJsonLd } from "@/lib/seo";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display-serif",
+  display: "swap",
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono-face",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL(seo.url),
-
-  title: {
-    default: "Vighnesh Gaddam | Full Stack Developer from Mumbai",
-    template: "%s | Vighnesh Gaddam",
-  },
-
-  verification: {
-    google:  seo.googleVerification,
-  },
-
-  description:
-    "I'm Vighnesh Gaddam, a full-stack developer who enjoys building fast, scalable web apps and turning ideas into real, working products. I work mainly with React, Next.js, NestJS, and TypeScript, focusing on clean architecture, performance, and systems that hold up in production.",
-
-  keywords: [
-    "Vighnesh Gaddam",
-    "Full Stack Developer Portfolio",
-    "Next.js Developer",
-    "React Developer",
-    "NestJS Backend Developer",
-    "TypeScript Engineer",
-    "Web Application Developer",
-    "MongoDB PostgreSQL Prisma",
-    "API Development",
-    "Software Engineer Portfolio",
-  ],
-
-  authors: [{  name: person.name }],
-  creator: person.name,
-
-  alternates: {
-    canonical: seo.url,
-  },
-
-icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
-
+  metadataBase: new URL(site.url),
+  title: { default: site.title, template: site.titleTemplate },
+  description: site.description,
+  applicationName: site.name,
+  keywords: [...site.keywords],
+  authors: [{ name: person.brand, url: site.url }],
+  creator: person.brand,
+  publisher: person.brand,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Vighnesh Gaddam | Full Stack Developer",
-    description:
-      "Here's a glimpse of what I've been working on — building web apps that don't just run fast, but hold up when things get real.",
-    url: seo.url,
-    siteName: seo.siteName,
-    images: [
-      {
-        url: seo.ogImage,
-        width: 1200,
-        height: 630,
-        alt: "Vighnesh Gaddam — Full Stack Developer",
-      },
-    ],
-    locale: "en_US",
     type: "website",
+    url: "/",
+    siteName: site.name,
+    title: site.title,
+    description: site.description,
+    locale: site.locale,
   },
-
   twitter: {
     card: "summary_large_image",
-    title: "Vighnesh Gaddam | Full Stack Developer",
-    description:
-      "I build web apps using React, Next.js, and TypeScript — the kind that stay fast, scale smoothly, and don't fall apart once real users show up.",
-    site: seo.twitterHandle,
-    images: [seo.ogImage],
+    title: site.title,
+    description: site.description,
+    creator: seoDefaults.twitterHandle,
+    site: seoDefaults.twitterHandle,
   },
-
-  applicationName: seo.siteName,
-  category: "technology",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  ...(seoDefaults.googleVerification
+    ? { verification: { google: seoDefaults.googleVerification } }
+    : {}),
+  category: "finance",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const viewport: Viewport = {
+  themeColor: site.themeColor,
+  colorScheme: "dark",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="bg-page text-main antialiased">
-
-        {/* Loader safety script */}
-        <Script id="loader-safety-switch" strategy="afterInteractive">
-          {`
-            (function() {
-              const hideLoader = () => {
-                const loader = document.getElementById('initial-loader');
-                if (loader) loader.classList.add('loaded');
-              };
-              if (document.readyState === 'complete') hideLoader();
-              else window.addEventListener('load', hideLoader);
-              setTimeout(hideLoader, 3000);
-            })();
-          `}
-        </Script>
-
-        {/* Loader */}
-        <div id="initial-loader">
-          <div className="loader-content">
-            <div className="loader-typography">
-              <span className="loader-name">VIGHNESH GADDAM</span>
-              <span className="loader-year">Portfolio 2026</span>
-            </div>
-            <div className="loader-circle-container">
-              <svg className="loader-circle-svg" viewBox="0 0 48 48">
-                <circle className="circle-bg" cx="24" cy="24" r="22" />
-                <circle className="circle-progress" cx="24" cy="24" r="22" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
+    <html lang="en-GB" className={`${inter.variable} ${display.variable} ${mono.variable}`}>
+      <body className="min-h-dvh bg-bg font-sans text-fg antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-fg focus:px-4 focus:py-2 focus:text-sm focus:text-bg"
         >
-          <PageLoadingProvider>
-            {children}
-            <ThemeToggle />
-          </PageLoadingProvider>
-        </ThemeProvider>
-
-        {/* Vercel observability — production only */}
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main" tabIndex={-1} className="outline-none">
+          {children}
+        </main>
+        <SiteFooter />
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(personJsonLd())} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(websiteJsonLd())} />
         <Analytics mode="production" />
         <SpeedInsights />
-        <GoogleAnalytics gaId="G-42FRP71HTB" />
       </body>
     </html>
   );
