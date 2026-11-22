@@ -41,7 +41,7 @@ The site ships with **demo content you can swap in VS Code**. Everything to chan
 
 Setting any social `url` to `null` hides that link and shows the card as "coming soon". Setting `portrait` to `null` shows the "TA" monogram instead of a photo.
 
-Email is live: **akinshola.toby16@gmail.com**.
+Email is live: **thetobyace@gmail.com**.
 
 The three starter articles in `src/content/insights` are educational drafts. Review them and edit to match your own views.
 
