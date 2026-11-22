@@ -66,7 +66,7 @@ export const secondaryNavigation: NavItem[] = [
 ];
 
 export const contact = {
-  email: "akinshola.toby16@gmail.com",
+  email: "thetobyace@gmail.com",
 } as const;
 
 export const seoDefaults = {
