@@ -87,30 +87,33 @@ export function SiteHeader() {
 
         <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-0.5 rounded-full border border-line bg-white/60 p-1 backdrop-blur">
-            {navigation.map((item) => {
-              const active = isActive(pathname, item.href);
-              return (
-                <li key={item.href} className="relative">
-                  {active && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-0 rounded-full bg-navy"
-                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`relative block whitespace-nowrap rounded-full px-3.5 py-2 text-[0.8125rem] font-semibold transition-colors duration-300 xl:px-4 ${
-                      active ? "text-white" : "text-navy-soft hover:text-navy"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
+            {navigation
+              .filter((item) => !item.mobileOnly)
+              .map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
+                  <li key={item.href} className="relative">
+                    {active && (
+                      <motion.span
+                        layoutId="nav-active"
+                        className="absolute inset-0 rounded-full bg-navy"
+                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-[0.8125rem] font-semibold transition-colors duration-300 xl:px-4 ${
+                        active ? "text-white" : item.highlight ? "text-sky-deep hover:text-navy" : "text-navy-soft hover:text-navy"
+                      }`}
+                    >
+                      {item.highlight && <span className={`h-1.5 w-1.5 rounded-full ${active ? "bg-sky" : "bg-sky-deep"}`} aria-hidden="true" />}
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
         </nav>
 
@@ -162,7 +165,14 @@ export function SiteHeader() {
                         aria-current={active ? "page" : undefined}
                         className={`flex flex-col gap-1 rounded-2xl border px-5 py-4 ${active ? "border-navy bg-navy text-white" : "border-line bg-white text-navy"}`}
                       >
-                        <span className="text-xl font-bold">{item.label}</span>
+                        <span className="flex items-center gap-2 text-xl font-bold">
+                          {item.label}
+                          {item.highlight && (
+                            <span className={`rounded-full px-2 py-0.5 font-mono text-[0.625rem] uppercase tracking-[0.12em] ${active ? "bg-sky text-navy" : "bg-ice text-sky-deep"}`}>
+                              Mentorship
+                            </span>
+                          )}
+                        </span>
                         <span className={`text-sm ${active ? "text-white/65" : "text-muted"}`}>{item.description}</span>
                       </Link>
                     </motion.li>

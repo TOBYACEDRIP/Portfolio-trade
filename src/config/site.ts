@@ -49,20 +49,34 @@ export const person = {
   portraitAlt: "Portrait of TheTobyAce",
 } as const;
 
-export type NavItem = { label: string; href: string; description: string };
+export type NavItem = {
+  label: string;
+  href: string;
+  description: string;
+  /** Hide from the desktop tab bar (still shown in the mobile menu). */
+  mobileOnly?: boolean;
+  /** Visually highlight the tab (used for The Liquidity Room). */
+  highlight?: boolean;
+};
 
 export const navigation: NavItem[] = [
-  { label: "Home", href: "/", description: "Start here." },
+  { label: "Home", href: "/", description: "Start here.", mobileOnly: true },
   { label: "TOBYACE Model", href: "/model", description: "Market Narrative and the four pillars of the framework." },
   { label: "Trading Library", href: "/library", description: "Curated video lessons by concept." },
   { label: "Market Insights", href: "/insights", description: "Chart breakdowns and market observations." },
   { label: "Experience", href: "/experience", description: "How the approach was developed." },
+  {
+    label: "Liquidity Room",
+    href: "/mentorship",
+    description: "The Liquidity Room group mentorship and private one-to-one programmes.",
+    highlight: true,
+  },
   { label: "Connect", href: "/connect", description: "Telegram, email and social platforms." },
 ];
 
 /** Secondary links shown in the footer only. */
 export const secondaryNavigation: NavItem[] = [
-  { label: "Mentorship", href: "/mentorship", description: "The Liquidity Room and private one-to-one mentorship." },
+  { label: "Private Mentorship", href: "/mentorship#tiers", description: "Private one-to-one mentorship tiers." },
 ];
 
 export const contact = {

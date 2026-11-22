@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { LiquidityRoomBand } from "@/components/layout/LiquidityRoomBand";
 import { Providers } from "@/components/ui/Providers";
 import { person, seoDefaults, site } from "@/config/site";
 import { jsonLdScript, personJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>
+          <LiquidityRoomBand />
           <SiteFooter />
         </Providers>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(personJsonLd())} />
