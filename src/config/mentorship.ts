@@ -236,7 +236,7 @@ export const comparison: { label: string; group: string; private: string }[] = [
 
 /* ── FAQ ─────────────────────────────────────────────────────────────────── */
 
-export const faqs: { q: string; a: string }[] = [
+export const faqs: { q: string; a: string; link?: { href: string; label: string } }[] = [
   {
     q: "Is this a signals service?",
     a: "No. Neither programme provides trades to copy. You learn the TOBYACE Model™ so you can build and judge your own analysis.",
@@ -272,6 +272,11 @@ export const faqs: { q: string; a: string }[] = [
   {
     q: "Are classes recorded?",
     a: "Liquidity Room sessions are recorded where available, so you can revisit lessons.",
+  },
+  {
+    q: "What is your refund policy?",
+    a: "You get a full refund if you cancel before your first class or session. Once the programme has started, fees are non-refundable, except where we can't deliver the sessions you paid for.",
+    link: { href: "/refund-policy", label: "Read the full Refund Policy" },
   },
   {
     q: "What happens after I apply or enquire?",

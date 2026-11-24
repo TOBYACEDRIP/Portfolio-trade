@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 /** Accessible FAQ using native <details>/<summary> — works without JavaScript. */
-export function Faq({ items }: { items: { q: string; a: string }[] }) {
+export function Faq({ items }: { items: { q: string; a: string; link?: { href: string; label: string } }[] }) {
   return (
     <div className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-soft)]">
       {items.map((f) => (
@@ -12,7 +13,17 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
               <Plus size={15} aria-hidden="true" />
             </span>
           </summary>
-          <p className="px-6 pb-6 text-sm leading-relaxed text-navy-soft sm:max-w-3xl sm:text-base">{f.a}</p>
+          <p className="px-6 pb-6 text-sm leading-relaxed text-navy-soft sm:max-w-3xl sm:text-base">
+            {f.a}
+            {f.link && (
+              <>
+                {" "}
+                <Link href={f.link.href} className="font-semibold text-sky-deep underline underline-offset-4 hover:text-navy">
+                  {f.link.label}
+                </Link>
+              </>
+            )}
+          </p>
         </details>
       ))}
     </div>

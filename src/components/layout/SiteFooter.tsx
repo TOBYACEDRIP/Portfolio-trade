@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { contact, navigation, person, riskDisclaimer, secondaryNavigation } from "@/config/site";
 import { socials } from "@/config/socials";
+import { legalLinks } from "@/config/legal";
 import { SocialIcon } from "@/components/icons/SocialIcon";
 import { Container } from "@/components/ui/primitives";
 import { Wordmark } from "./Wordmark";
@@ -66,6 +67,17 @@ export function SiteFooter() {
             <span className="font-semibold text-white/75">Risk disclaimer. </span>
             {riskDisclaimer}
           </p>
+          <nav aria-label="Legal" className="mt-6">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+              {legalLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-white/70 underline decoration-white/20 underline-offset-4 hover:text-white">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <div className="mt-6 flex flex-col gap-2 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {year} {person.brand}. All rights reserved.
