@@ -50,6 +50,7 @@ export function LiquidityRoomBand() {
             Learn more
           </Link>
           <p className="w-full text-xs text-muted">
+            Non-refundable ·{" "}
             <Link href="/refund-policy" className="underline underline-offset-2 hover:text-navy">Refund Policy</Link> ·{" "}
             <Link href="/terms" className="underline underline-offset-2 hover:text-navy">Terms</Link>
           </p>

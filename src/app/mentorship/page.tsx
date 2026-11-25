@@ -147,7 +147,7 @@ export default function MentorshipPage() {
                     </a>
                   </div>
                   <p className="mt-3 text-xs text-muted">
-                    By enrolling you agree to the{" "}
+                    All fees are non-refundable. By enrolling you agree to the{" "}
                     <Link href="/terms" className="underline underline-offset-2 hover:text-navy">Terms</Link> and{" "}
                     <Link href="/refund-policy" className="underline underline-offset-2 hover:text-navy">Refund Policy</Link>.
                   </p>
@@ -516,7 +516,7 @@ export default function MentorshipPage() {
                     Choose a tier, or let me advise you. A few short questions help me understand where you are and which programme fits. I review every application individually and reply with next steps.
                   </p>
                   <p className="mt-4 text-sm text-white/60">
-                    By applying you agree to the{" "}
+                    All fees are non-refundable. By applying you agree to the{" "}
                     <Link href="/terms" className="text-white underline underline-offset-2 hover:text-sky">Terms of Service</Link> and{" "}
                     <Link href="/refund-policy" className="text-white underline underline-offset-2 hover:text-sky">Refund Policy</Link>.
                   </p>

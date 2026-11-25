@@ -275,7 +275,7 @@ export const faqs: { q: string; a: string; link?: { href: string; label: string 
   },
   {
     q: "What is your refund policy?",
-    a: "You get a full refund if you cancel before your first class or session. Once the programme has started, fees are non-refundable, except where we can't deliver the sessions you paid for.",
+    a: "All mentorship fees are non-refundable once paid, for The Liquidity Room and every private tier. If you're unsure which programme suits you, ask before paying. The only exception is if we can't deliver sessions you've paid for.",
     link: { href: "/refund-policy", label: "Read the full Refund Policy" },
   },
   {
