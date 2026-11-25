@@ -125,6 +125,10 @@ The narrative is rendered as a structured panel with a clear "directional expect
 
 ---
 
+## Legal pages
+
+`/terms`, `/refund-policy`, `/privacy` and `/risk-disclosure` are written in plain Markdown in `src/content/legal/`. Edit the text there and update the `updated:` date at the top. The refund policy is no-refunds (fees are non-refundable, except for sessions that can't be delivered). The Terms are governed by Nigerian law. Have the documents reviewed by a qualified lawyer before relying on them.
+
 ## Project structure
 
 ```

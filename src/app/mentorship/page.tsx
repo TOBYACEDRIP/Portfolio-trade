@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowDown, ArrowRight, Check, Lock, MessagesSquare, ShieldCheck, Users, Video } from "lucide-react";
 import { comparison, faqs, group, mentorshipIntro, privateMentorship, privateTiers, sharedFoundation, telegramHref, tierComparison } from "@/config/mentorship";
 import { riskDisclaimer } from "@/config/site";
@@ -145,6 +146,11 @@ export default function MentorshipPage() {
                       See the 8 classes
                     </a>
                   </div>
+                  <p className="mt-3 text-xs text-muted">
+                    All fees are non-refundable. By enrolling you agree to the{" "}
+                    <Link href="/terms" className="underline underline-offset-2 hover:text-navy">Terms</Link> and{" "}
+                    <Link href="/refund-policy" className="underline underline-offset-2 hover:text-navy">Refund Policy</Link>.
+                  </p>
                 </div>
               </article>
             </TiltCard>
@@ -509,6 +515,11 @@ export default function MentorshipPage() {
                   <p className="mt-5 text-white/70">
                     Choose a tier, or let me advise you. A few short questions help me understand where you are and which programme fits. I review every application individually and reply with next steps.
                   </p>
+                  <p className="mt-4 text-sm text-white/60">
+                    All fees are non-refundable. By applying you agree to the{" "}
+                    <Link href="/terms" className="text-white underline underline-offset-2 hover:text-sky">Terms of Service</Link> and{" "}
+                    <Link href="/refund-policy" className="text-white underline underline-offset-2 hover:text-sky">Refund Policy</Link>.
+                  </p>
                   <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.05] p-5">
                     <p className="text-sm font-semibold text-white">Looking for The Liquidity Room instead?</p>
                     <SmartLink href={joinHref} className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-sky hover:text-white">
@@ -520,7 +531,10 @@ export default function MentorshipPage() {
               </div>
             </div>
           </Reveal>
-          <p className="mt-8 max-w-4xl text-xs leading-relaxed text-muted">{riskDisclaimer} Mentorship is education only and does not guarantee profits, consistency or any particular trading outcome.</p>
+          <p className="mt-8 max-w-4xl text-xs leading-relaxed text-muted">
+            {riskDisclaimer} Mentorship is education only and does not guarantee profits, consistency or any particular trading outcome. See the{" "}
+            <Link href="/risk-disclosure" className="underline underline-offset-2 hover:text-navy">Risk Disclosure</Link>.
+          </p>
         </Container>
       </section>
     </>
